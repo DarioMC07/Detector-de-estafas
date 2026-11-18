@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0c0e">
+  <meta name="description" content="Revisa las señales de riesgo de un mensaje con una herramienta local y orientativa.">
+  <title>Mensaje Seguro — Revisa un mensaje</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#principal">Ir al contenido</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#principal" aria-label="Mensaje Seguro, inicio">
+        <span aria-hidden="true" class="brand-icon">
+          <svg viewBox="0 0 40 44" fill="none"><path d="M20 3 35 9v12c0 9-6 15-15 20C11 36 5 30 5 21V9L20 3Z"/><path d="m13 21 5 5 10-11"/></svg>
+        </span>
+        <span>Mensaje <strong>Seguro</strong><span class="brand-caption">ANÁLISIS INTELIGENTE DE MENSAJES</span></span>
+      </a>
+      <div class="header-meta"><span class="badge">Proyecto universitario</span><a class="header-link" href="/chat">Mensajería <span aria-hidden="true">💬</span></a><a class="header-link" href="#analizador">Revisar un mensaje <span aria-hidden="true">↗</span></a></div>
+    </div>
+  </header>
+  <main id="principal" class="container">
+    <section class="intro" aria-labelledby="titulo">
+      <div class="intro-copy">
+        <p class="eyebrow"><span class="small-line" aria-hidden="true"></span> Una pausa antes de responder</p>
+        <h1 id="titulo">Revisa un mensaje<br><span>antes de confiar</span></h1>
+        <p class="lead">La tranquilidad empieza con una segunda mirada. Revisa ese mensaje que te genera dudas y conoce sus posibles señales de riesgo.</p>
+        <div class="intro-features"><span>Análisis local</span><span>Sin guardar mensajes</span><span>Sin coste</span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit orbit-outer"></div><div class="orbit orbit-inner"></div>
+        <span class="orbit-point"></span>
+        <div class="shield-emblem">
+          <svg viewBox="0 0 120 140" fill="none"><path class="shield-outline" d="M60 8 104 25v37c0 30-18 50-44 67C34 112 16 92 16 62V25L60 8Z"/><path class="shield-inset" d="m60 20 33 13v29c0 24-13 41-33 55-20-14-33-31-33-55V33l33-13Z"/><path class="shield-check" d="m42 65 13 13 26-30"/></svg>
+        </div>
+        <div class="art-caption"><span>MENSAJE SEGURO</span><small>Tecnología para decidir con calma</small></div>
+      </div>
+    </section>
+
+    <div class="model-status"><span class="status-mark" aria-hidden="true">i</span><div id="model-notice" role="status">Comprobando el modelo local…</div><span class="status-tag" aria-hidden="true">MVP / 01</span></div>
+    <noscript><p class="error">Activa JavaScript para analizar mensajes desde esta página.</p></noscript>
+
+    <section id="analizador" class="panel analyzer" aria-labelledby="entrada-titulo">
+      <div class="panel-heading">
+        <div class="section-heading"><span class="step-number" aria-hidden="true">01</span><div><p class="eyebrow">Tu espacio de revisión</p><h2 id="entrada-titulo">Pega el mensaje</h2></div></div>
+        <span class="panel-caption">Una lectura más consciente</span>
+      </div>
+      <p id="input-help">Incluye el mensaje completo, pero evita compartir datos personales, contraseñas o códigos reales.</p>
+      <form id="analyze-form">
+        <label for="message">Mensaje que quieres revisar</label>
+        <textarea id="message" name="texto" rows="7" maxlength="5000" required aria-describedby="input-help character-count" placeholder="Pega aquí el mensaje que quieres revisar…" spellcheck="false"></textarea>
+        <div class="input-footer"><span>Máximo 5.000 caracteres</span><span id="character-count">0 / 5.000</span></div>
+        <div class="actions">
+          <button type="submit" id="analyze-button" class="primary">Analizar mensaje <span aria-hidden="true">→</span></button>
+          <button type="button" id="clear-button" class="secondary">Limpiar</button>
+        </div>
+        <p id="loading" role="status" hidden>Analizando el mensaje, espera un momento…</p>
+        <p id="error" class="error" role="alert" hidden></p>
+      </form>
+      <p class="privacy"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span>El análisis se realiza en este servidor local. Los mensajes no se guardan. No se abren enlaces ni archivos.</span></p>
+    </section>
+
+    <section id="result" class="panel result" aria-labelledby="result-title" aria-live="polite" hidden>
+      <p class="eyebrow">02 / Revisa la orientación</p>
+      <h2 id="result-title" tabindex="-1"><span id="result-icon" aria-hidden="true"></span> <span id="category"></span></h2>
+      <p class="model-label">Clasificación binaria · Legítimo o fraudulento</p>
+      <p id="uncertainty-warning" class="notice uncertainty-notice" hidden></p>
+      <p id="explanation"></p>
+      <p id="demo-warning" class="notice" hidden>Modelo de demostración entrenado con mensajes ficticios. No permite validar la eficacia real del sistema.</p>
+      <div class="result-details">
+        <div><h3>Señales observadas por reglas</h3><p>Estas señales son independientes de la clasificación. También pueden aparecer en mensajes legítimos.</p><ul id="signals" class="signals"></ul></div>
+        <div><h3>Qué puedes hacer</h3><ul id="recommendations" class="recommendations"></ul></div>
+      </div>
+      <p class="disclaimer">Esta evaluación es orientativa y puede cometer errores.</p>
+      <button type="button" id="another-button" class="primary">Analizar otro mensaje</button>
+    </section>
+
+    <aside class="help">
+      <span class="help-symbol" aria-hidden="true">↗</span>
+      <div><p class="eyebrow">La mejor decisión no tiene prisa</p><h2>Si tienes dudas, pide ayuda</h2><p>Contacta con la persona o entidad por un medio que ya conozcas, o consulta a alguien de confianza.</p></div>
+    </aside>
+  </main>
+  <footer class="container site-footer"><div class="footer-brand">Mensaje <strong>Seguro</strong><span>MVP académico · Sin servicios externos de IA</span></div><p>Esta evaluación es orientativa<br>y puede cometer errores.</p></footer>
+</body>
+</html>

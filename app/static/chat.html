@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0c0e">
+  <meta name="description" content="Mensajería en tiempo real con detección automática de estafas.">
+  <title>Mensaje Seguro — Mensajería</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/chat.css">
+  <script src="/static/chat.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#chat-area">Ir a la conversación</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="Mensaje Seguro, inicio">
+        <span aria-hidden="true" class="brand-icon">
+          <svg viewBox="0 0 40 44" fill="none"><path d="M20 3 35 9v12c0 9-6 15-15 20C11 36 5 30 5 21V9L20 3Z"/><path d="m13 21 5 5 10-11"/></svg>
+        </span>
+        <span>Mensaje <strong>Seguro</strong><span class="brand-caption">MENSAJERÍA PROTEGIDA</span></span>
+      </a>
+      <div class="header-meta">
+        <span class="badge">Proyecto universitario</span>
+        <a class="header-link" href="/">Analizador <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container chat-container">
+    <!-- PANTALLA DE INICIO DE SESIÓN -->
+    <section id="login-screen" class="panel login-panel" aria-labelledby="login-title">
+      <div class="login-content">
+        <div class="login-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M6 18h36M18 26h12M18 32h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h1 id="login-title">Inicia tu sesión de mensajería</h1>
+        <p class="login-subtitle">Ingresa tu número telefónico en formato internacional para chatear.</p>
+
+        <form id="login-form" autocomplete="off">
+          <label for="my-phone">Tu número de teléfono</label>
+          <input type="tel" id="my-phone" placeholder="+591 70011223" required autocomplete="off" spellcheck="false">
+          <p class="input-hint">Formato internacional con código de país (ej: +591, +54, +34)</p>
+          <button type="submit" class="primary login-btn">Conectar <span aria-hidden="true">→</span></button>
+        </form>
+
+        <p id="login-error" class="error" role="alert" hidden></p>
+
+        <div class="login-features">
+          <span>Chat en tiempo real</span>
+          <span>Detección de estafas</span>
+          <span>Sin registro</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA PRINCIPAL DE CHAT -->
+    <section id="chat-screen" class="chat-layout" hidden>
+      <!-- BARRA LATERAL -->
+      <aside class="chat-sidebar">
+        <div class="sidebar-header">
+          <div class="my-info">
+            <span class="my-avatar" aria-hidden="true">📱</span>
+            <div>
+              <span id="my-phone-display" class="my-number"></span>
+              <span class="status-online">En línea</span>
+            </div>
+          </div>
+          <button type="button" id="logout-btn" class="icon-btn" title="Desconectarse" aria-label="Desconectarse">✕</button>
+        </div>
+
+        <div class="new-chat-section">
+          <h2 class="sidebar-section-title">Nueva conversación</h2>
+          <form id="new-chat-form" class="new-chat-form" autocomplete="off">
+            <input type="tel" id="dest-phone" placeholder="+591 69876543" required autocomplete="off" spellcheck="false" aria-label="Número del destinatario">
+            <button type="submit" class="small-btn" title="Iniciar chat">💬</button>
+          </form>
+        </div>
+
+        <div class="contacts-section">
+          <h2 class="sidebar-section-title">Conversaciones</h2>
+          <ul id="contacts-list" class="contacts-list" aria-label="Lista de conversaciones">
+            <li class="no-contacts">Aún no hay conversaciones.</li>
+          </ul>
+        </div>
+
+        <div class="online-section">
+          <h2 class="sidebar-section-title">Usuarios en línea</h2>
+          <ul id="online-list" class="online-list" aria-label="Usuarios conectados">
+            <li class="no-online">Ningún otro usuario conectado.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- ÁREA DE CONVERSACIÓN -->
+      <div class="chat-main">
+        <!-- Estado sin conversación seleccionada -->
+        <div id="no-chat" class="no-chat-placeholder">
+          <div class="placeholder-icon" aria-hidden="true">
+            <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" stroke="currentColor" stroke-width="1"/><path d="M24 34h32M24 42h20M24 50h26" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <h2>Selecciona o inicia una conversación</h2>
+          <p>Escribe un número telefónico arriba para comenzar a chatear con detección de estafas en tiempo real.</p>
+        </div>
+
+        <!-- Conversación activa -->
+        <div id="active-chat" class="active-chat" hidden>
+          <div class="chat-topbar">
+            <button type="button" id="back-btn" class="icon-btn back-btn" title="Volver" aria-label="Volver a conversaciones">←</button>
+            <div class="chat-peer-info">
+              <span id="peer-phone" class="peer-number"></span>
+              <span id="peer-status" class="peer-status">Desconectado</span>
+            </div>
+            <div class="chat-topbar-badge">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 21 6v5c0 7-4 11-9 14C7 22 3 18 3 11V6l9-4Z" stroke="currentColor" stroke-width="1.2"/><path d="m8 12 3 3 5-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Protegido</span>
+            </div>
+          </div>
+
+          <div id="chat-area" class="chat-messages" role="log" aria-live="polite" aria-label="Mensajes de la conversación">
+          </div>
+
+          <form id="send-form" class="chat-input-bar" autocomplete="off">
+            <input type="text" id="msg-input" class="msg-input" placeholder="Escribe un mensaje..." maxlength="5000" required autocomplete="off" aria-label="Escribe un mensaje">
+            <button type="submit" class="send-btn" title="Enviar mensaje" aria-label="Enviar">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container site-footer">
+    <div class="footer-brand">Mensaje <strong>Seguro</strong><span>MVP académico · Mensajería con detección de estafas</span></div>
+    <p>Esta evaluación es orientativa<br>y puede cometer errores.</p>
+  </footer>
+</body>
+</html>
+

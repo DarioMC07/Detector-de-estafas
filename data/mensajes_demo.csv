@@ -1,0 +1,149 @@
+texto,etiqueta
+"Hola mamá, llego a casa a las seis. Te llamo cuando salga.",legitimo
+"Tu cita en el centro de salud es el martes a las 10:30. Si necesitas cambios llama al teléfono habitual.",legitimo
+"La biblioteca informa de que el libro reservado ya está disponible para recoger.",legitimo
+"Mañana tenemos reunión de vecinos a las siete en el portal.",legitimo
+"El pedido está listo para recoger en nuestra tienda. Trae tu recibo.",legitimo
+"Te envío las fotos de las vacaciones cuando tenga un momento.",legitimo
+"Recuerda llevar la tarjeta sanitaria a la consulta del jueves.",legitimo
+"El taller ha terminado la revisión del coche. Puedes pasar esta tarde.",legitimo
+"La clase de informática empieza el lunes en el centro cultural.",legitimo
+"Ya he comprado el pan y la fruta. Nos vemos para comer.",legitimo
+"El recibo de la comunidad está disponible en la oficina del administrador.",legitimo
+"La oficina permanecerá cerrada durante el festivo local.",legitimo
+"Consulta los horarios de la biblioteca en https://biblioteca.example.org/horarios.",legitimo
+"El curso gratuito de lectura tiene plazas disponibles. Información en el centro municipal.",legitimo
+"¡Feliz cumpleaños! Espero que pases un día estupendo con la familia.",legitimo
+"No compartas tu contraseña con nadie. Nuestro personal nunca te la pedirá por mensaje.",legitimo
+"Hemos recibido tu solicitud de cambio de domicilio. Puedes consultar su estado en la oficina.",legitimo
+"El autobús de la excursión sale a las nueve desde la plaza.",legitimo
+"La farmacia confirma que tu encargo puede recogerse mañana.",legitimo
+"¿Puedes traer el paraguas? Está lloviendo mucho.",legitimo
+"La factura de este mes se cargará mediante la domiciliación acordada.",legitimo
+"Gracias por asistir al taller. El material está en https://formacion.example.org/material.",legitimo
+"El museo abre de martes a domingo. La entrada del domingo es gratuita.",legitimo
+"He cambiado la hora de la comida al sábado a las dos. Avísame si puedes venir.",legitimo
+"Tu turno de atención es el número 24. Espera a que aparezca en la pantalla.",legitimo
+"El equipo de fútbol entrena hoy en el campo de siempre.",legitimo
+"La asociación confirma la recepción de tu inscripción al paseo del barrio.",legitimo
+"Por favor revisa el borrador del trabajo antes de nuestra reunión del viernes.",legitimo
+"Tenemos que llamar al fontanero esta semana para revisar el grifo.",legitimo
+"La transferencia que acordamos está anotada en el presupuesto. La revisamos juntos en persona.",legitimo
+"Puedes leer el programa de fiestas en www.ayuntamiento.example.org.",legitimo
+"La reparación está incluida en la garantía; no debes realizar ningún pago adicional.",legitimo
+"¡Gracias por tu ayuda con la mudanza! Te invito a cenar el viernes.",legitimo
+"Si has olvidado la contraseña entra en la aplicación que usas habitualmente y sigue la ayuda.",legitimo
+"El centro de mayores organiza una charla sobre prevención de estafas el miércoles.",legitimo
+"El concurso de dibujo del colegio termina mañana. Los trabajos se entregan en clase.",legitimo
+"La revisión dental será en la consulta de siempre a las doce.",legitimo
+"Necesito confirmar cuántos venís a cenar para hacer la compra.",legitimo
+"El paquete se encuentra en recepción. Puedes recogerlo con tu identificación.",legitimo
+"La entrega de premios de la carrera será el domingo en el polideportivo.",legitimo
+"URGENTE: tu cuenta será bloqueada en una hora. Envía tu contraseña para evitarlo.",fraudulento
+"Has ganado 5000 euros sin participar. Paga una tasa de 50 euros para recibir tu premio.",fraudulento
+"Somos el banco. Confirma tu clave y el código SMS ahora mismo o perderás el acceso.",fraudulento
+"Tu paquete está retenido. Paga inmediatamente en https://entrega-verificar.example.com/pago.",fraudulento
+"Hola mamá soy tu hijo, este es mi nuevo número. Haz una transferencia urgente de 900 euros.",fraudulento
+"Último aviso: multa pendiente. Abona hoy en http://multa-rapida.example.net o serás detenido.",fraudulento
+"Tu tarjeta ha sido suspendida. Introduce el PIN en www.validar-tarjeta.example.com.",fraudulento
+"Inversión garantizada: duplica tu dinero en 24 horas. Transfiere tus ahorros ahora.",fraudulento
+"Felicidades, eres el ganador de un teléfono gratis. Envía tus datos bancarios y paga el envío.",fraudulento
+"Departamento de seguridad: responde con el código de verificación que acabas de recibir.",fraudulento
+"Solo tienes diez minutos para reclamar tu herencia. Ingresa 200 euros para desbloquearla.",fraudulento
+"Detectamos un cargo. Para anularlo comparte tu contraseña de banca y tu código SMS.",fraudulento
+"Oferta exclusiva de empleo: gana 300 euros al día. Primero debes pagar la matrícula por transferencia.",fraudulento
+"Tu devolución de impuestos caduca hoy. Escribe tu tarjeta completa en https://reembolso.example.net.",fraudulento
+"¡PREMIO ASEGURADO! Has sido seleccionado. Compra tarjetas regalo y envíanos sus códigos.",fraudulento
+"Soy el director, no puedo hablar. Necesito que transfieras dinero a esta cuenta ahora mismo.",fraudulento
+"Actualiza tu correo o borraremos todos tus archivos. Responde con usuario y contraseña.",fraudulento
+"Tenemos un vídeo tuyo. Paga en criptomonedas hoy o lo enviaremos a todos tus contactos.",fraudulento
+"Tu pensión será cancelada. Verifica tus claves urgentemente en https://pension-segura.example.com.",fraudulento
+"Recibe un bono de supermercado de 1000 euros. Paga 3 euros para activar el regalo.",fraudulento
+"El banco necesita tu PIN y contraseña para una revisión inmediata. No llames a tu oficina.",fraudulento
+"Te han concedido un préstamo sin requisitos. Deposita una comisión antes de recibirlo.",fraudulento
+"Tu familiar está detenido. Envía dinero inmediatamente y no lo consultes con nadie.",fraudulento
+"Ganaste la lotería internacional. Para cobrar debes transferir primero los impuestos a nuestra cuenta.",fraudulento
+"Alerta de acceso ilegal. Instala el archivo adjunto y facilita tus claves al técnico.",fraudulento
+"Necesitamos el número de tu tarjeta y el código de seguridad para liberar tu paquete.",fraudulento
+"Aprovecha esta inversión sin riesgo. Beneficio del 40 por ciento semanal si pagas hoy.",fraudulento
+"Tu servicio eléctrico se cortará en treinta minutos. Paga por este enlace https://cobro.example.org.",fraudulento
+"Has recibido una donación millonaria. Envía una comisión de gestión para desbloquear el dinero.",fraudulento
+"Soy tu nieta, perdí el móvil. No llames y hazme un Bizum urgente a este nuevo número.",fraudulento
+"Valida tu identidad enviando una foto de tu tarjeta por ambos lados y tu contraseña.",fraudulento
+"Última oportunidad para recuperar tu cuenta. Comparte el código de acceso en este chat.",fraudulento
+"Reembolso aprobado: paga una tarifa de activación mediante transferencia para cobrarlo.",fraudulento
+"Un comprador ya pagó tu producto. Abre https://cobrar-venta.example.net e introduce tu clave bancaria.",fraudulento
+"Tu antivirus ha caducado. Llama ahora y permite el acceso remoto para evitar perder tus fotos.",fraudulento
+"Hemos cambiado la cuenta del proveedor. Paga la factura hoy sin comprobarlo por teléfono.",fraudulento
+"Tu cuenta está en peligro. Retira tus ahorros y transfiérelos a nuestra cuenta de seguridad.",fraudulento
+"Regalo exclusivo para jubilados. Para reservarlo necesitamos tu tarjeta y un pago inmediato.",fraudulento
+"No le digas a nadie: necesito dinero para salir del hospital. Envíalo ahora a este número.",fraudulento
+"Tu premio está esperando. Entra en www.premio-inmediato.example.com y paga antes de medianoche.",fraudulento
+"Te ganaste 5000 BS! entra a este enlace para reclamar el premio https://cobrartupremio.com",fraudulento
+"HOLA MAMI SOY TU HIJO, ROBARON MI CELULAR, MANDAME PLATA A ESTE NUEVO NUMERO PARA PODER COMUNICARME CON VOS.",fraudulento
+
+"Hola",legitimo
+"Hola, ¿cómo estás?",legitimo
+"Holaa, qué tal?",legitimo
+"Hola buenas, ¿cómo te va?",legitimo
+"Buenos días a todos",legitimo
+"Buenas tardes, ¿todo bien?",legitimo
+"Buenas noches, que descanses",legitimo
+"¿Qué onda amigo? ¿Cómo estás?",legitimo
+"Hola mami, ¿cómo estás? Te llamo más tarde",legitimo
+"Hola papá, ya llegué a la universidad",legitimo
+"Dale, me parece perfecto",legitimo
+"Listo, nos vemos a las tres",legitimo
+"Ok, ya salí de la oficina, voy para allá",legitimo
+"Estoy en camino, llego en 10 minutos",legitimo
+"Avísame cuando llegues a casa",legitimo
+"Muchas gracias por tu ayuda de hoy",legitimo
+"¿A qué hora nos encontramos para comer?",legitimo
+"¿Vamos a almorzar juntos?",legitimo
+"Te llamo en un rato, estoy en una reunión",legitimo
+"Hablamos más tarde, cuídate mucho",legitimo
+"Perfecto, nos vemos mañana",legitimo
+"Claro que sí, cuenta conmigo",legitimo
+"Un abrazo grande, saludos a la familia",legitimo
+"¿Viste el partido de ayer? Estuvo muy bueno",legitimo
+"Buen viaje, que te vaya muy bien",legitimo
+"¿Me pasas las fotos del fin de semana por favor?",legitimo
+"Te comparto el documento para que lo revises con calma",legitimo
+"Aviso urgente Banco: Tu cuenta ha sido bloqueada preventivamente. Desbloquea en https://banco-desbloqueo.net",fraudulento
+"Felicidades, tu número ha sido seleccionado para ganar 10.000 Bs. Reclama tu premio aquí: https://premio-sorteo.com",fraudulento
+"Tía se me arruinó el celular, estoy varado en la terminal, ¿puedes prestarme dinero por QR urgente?",fraudulento
+"Servicio de Impuestos: Tienes una deuda pendiente con orden de embargo. Paga de inmediato en https://pago-multas.online",fraudulento
+"Tu paquete no pudo ser entregado por falta de dirección. Paga los costos de reenvío en https://rastreo-paqueteria.com",fraudulento
+
+"Hola",legitimo
+"Hola, ¿cómo estás?",legitimo
+"Holaa, qué tal?",legitimo
+"Hola buenas, ¿cómo te va?",legitimo
+"Buenos días a todos",legitimo
+"Buenas tardes, ¿todo bien?",legitimo
+"Buenas noches, que descanses",legitimo
+"¿Qué onda amigo? ¿Cómo estás?",legitimo
+"Hola mami, ¿cómo estás? Te llamo más tarde",legitimo
+"Hola papá, ya llegué a la universidad",legitimo
+"Dale, me parece perfecto",legitimo
+"Listo, nos vemos a las tres",legitimo
+"Ok, ya salí de la oficina, voy para allá",legitimo
+"Estoy en camino, llego en 10 minutos",legitimo
+"Avísame cuando llegues a casa",legitimo
+"Muchas gracias por tu ayuda de hoy",legitimo
+"¿A qué hora nos encontramos para comer?",legitimo
+"¿Vamos a almorzar juntos?",legitimo
+"Te llamo en un rato, estoy en una reunión",legitimo
+"Hablamos más tarde, cuídate mucho",legitimo
+"Perfecto, nos vemos mañana",legitimo
+"Claro que sí, cuenta conmigo",legitimo
+"Un abrazo grande, saludos a la familia",legitimo
+"¿Viste el partido de ayer? Estuvo muy bueno",legitimo
+"Buen viaje, que te vaya muy bien",legitimo
+"¿Me pasas las fotos del fin de semana por favor?",legitimo
+"Te comparto el documento para que lo revises con calma",legitimo
+"Aviso urgente Banco: Tu cuenta ha sido bloqueada preventivamente. Desbloquea en https://banco-desbloqueo.net",fraudulento
+"Felicidades, tu número ha sido seleccionado para ganar 10.000 Bs. Reclama tu premio aquí: https://premio-sorteo.com",fraudulento
+"Tía se me arruinó el celular, estoy varado en la terminal, ¿puedes prestarme dinero por QR urgente?",fraudulento
+"Servicio de Impuestos: Tienes una deuda pendiente con orden de embargo. Paga de inmediato en https://pago-multas.online",fraudulento
+"Tu paquete no pudo ser entregado por falta de dirección. Paga los costos de reenvío en https://rastreo-paqueteria.com",fraudulento
