@@ -1,8 +1,12 @@
 """Gestor de conexiones WebSocket y almacén temporal de mensajes de chat."""
 
+import hashlib
+import hmac
+import json
 import re
 import time
 from dataclasses import asdict, dataclass, field
+from pathlib import Path
 from typing import Any
 
 from fastapi import WebSocket
@@ -24,6 +28,8 @@ class ChatMessage:
     senales: list[dict[str, str]] = field(default_factory=list)
     recomendaciones: list[str] = field(default_factory=list)
     datos_demostrativos: bool = False
+    # Identificador provisional que asigna la app al enviar (para evitar duplicados al reconectar)
+    client_id: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -69,16 +75,67 @@ def conversation_key(a: str, b: str) -> str:
     return "|".join(sorted([a, b]))
 
 
+class DeviceRegistry:
+    """Vincula cada número con el dispositivo que lo registró primero.
+
+    La app móvil genera un token aleatorio por instalación y lo envía al conectarse.
+    Se guarda solo su hash SHA-256. Si un número ya está vinculado, solo ese mismo
+    dispositivo puede volver a usarlo: así nadie puede escribir haciéndose pasar
+    por otro número. Las conexiones sin token (interfaz web de demostración) solo
+    pueden usar números que no estén vinculados a un dispositivo.
+    """
+
+    def __init__(self, path: Path | None = None) -> None:
+        self._path = path
+        self._hashes: dict[str, str] = {}
+        if path is not None and path.exists():
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                if isinstance(data, dict):
+                    self._hashes = {str(k): str(v) for k, v in data.items()}
+            except (OSError, ValueError):
+                self._hashes = {}
+
+    @staticmethod
+    def _hash(token: str) -> str:
+        return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+    def is_registered(self, phone: str) -> bool:
+        return phone in self._hashes
+
+    def authorize(self, phone: str, token: str | None) -> bool:
+        """Devuelve True si la conexión puede usar el número (y lo vincula si es nuevo)."""
+        stored = self._hashes.get(phone)
+        if not token:
+            return stored is None
+        token_hash = self._hash(token)
+        if stored is None:
+            self._hashes[phone] = token_hash
+            self._save()
+            return True
+        return hmac.compare_digest(stored, token_hash)
+
+    def _save(self) -> None:
+        if self._path is None:
+            return
+        try:
+            self._path.parent.mkdir(parents=True, exist_ok=True)
+            self._path.write_text(json.dumps(self._hashes, indent=2), encoding="utf-8")
+        except OSError:
+            pass
+
+
 class ConnectionManager:
     """Gestor en memoria de conexiones WebSocket activas y mensajes de chat."""
 
-    def __init__(self) -> None:
+    def __init__(self, registry: DeviceRegistry | None = None) -> None:
         # Mapa: número normalizado → WebSocket activo
         self._connections: dict[str, WebSocket] = {}
         # Mapa: clave de conversación → lista de mensajes
         self._history: dict[str, list[ChatMessage]] = {}
         # Contador global para IDs de mensajes
         self._counter: int = 0
+        self.registry = registry or DeviceRegistry()
 
     @property
     def active_users(self) -> list[str]:
@@ -97,9 +154,20 @@ class ConnectionManager:
                 pass
         self._connections[phone] = websocket
 
-    def disconnect(self, phone: str) -> None:
-        """Elimina la conexión de un número telefónico."""
-        self._connections.pop(phone, None)
+    def disconnect(self, phone: str, websocket: WebSocket | None = None) -> bool:
+        """Elimina la conexión de un número telefónico.
+
+        Si se indica ``websocket``, solo se elimina cuando sigue siendo la conexión
+        activa. Así, al cerrarse una sesión antigua (reemplazada por una reconexión),
+        no se borra por error la conexión nueva. Devuelve True si se eliminó.
+        """
+        current = self._connections.get(phone)
+        if current is None:
+            return False
+        if websocket is not None and current is not websocket:
+            return False
+        del self._connections[phone]
+        return True
 
     def is_online(self, phone: str) -> bool:
         """Comprueba si un número tiene conexión WebSocket activa."""
@@ -124,6 +192,17 @@ class ConnectionManager:
         key = conversation_key(phone_a, phone_b)
         return [m.to_dict() for m in self._history.get(key, [])]
 
+    def get_conversations(self, phone: str) -> dict[str, list[dict[str, Any]]]:
+        """Devuelve todas las conversaciones de un número: {otro_número: [mensajes]}."""
+        result: dict[str, list[dict[str, Any]]] = {}
+        for key, messages in self._history.items():
+            a, _, b = key.partition("|")
+            if phone not in (a, b):
+                continue
+            peer = b if a == phone else a
+            result[peer] = [m.to_dict() for m in messages]
+        return result
+
     async def send_to(self, phone: str, data: dict[str, Any]) -> bool:
         """Envía un mensaje JSON a un número conectado. Devuelve True si se pudo enviar."""
         ws = self._connections.get(phone)
@@ -133,6 +212,6 @@ class ConnectionManager:
             await ws.send_json(data)
             return True
         except Exception:
-            self.disconnect(phone)
+            self.disconnect(phone, ws)
             return False
 

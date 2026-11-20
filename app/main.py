@@ -12,6 +12,7 @@ from app.chat_manager import (
     MAX_CHAT_TEXT,
     ChatMessage,
     ConnectionManager,
+    DeviceRegistry,
     normalize_phone,
 )
 from app.predictor import ModelUnavailable, Predictor
@@ -30,7 +31,8 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
             low if low is not None else float(os.getenv("UMBRAL_BAJO", "0.35")),
             high if high is not None else float(os.getenv("UMBRAL_ALTO", "0.70")),
         )
-        application.state.chat_manager = ConnectionManager()
+        registry_path = Path(os.getenv("CHAT_DEVICES_PATH", str(ROOT / "data" / "dispositivos_chat.json")))
+        application.state.chat_manager = ConnectionManager(DeviceRegistry(registry_path))
         yield
 
     # El esquema JSON es local; no cargar Swagger/ReDoc desde CDN de terceros.
@@ -154,12 +156,22 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
             await websocket.close(code=4000, reason="Número telefónico inválido")
             return
 
+        # Solo el dispositivo que registró el número puede usarlo (evita suplantación).
+        token = (websocket.query_params.get("token") or "").strip()[:200] or None
+        if not manager.registry.authorize(phone, token):
+            await websocket.accept()
+            await websocket.close(code=4003, reason="Este número ya está registrado en otro dispositivo")
+            return
+
         await manager.connect(phone, websocket)
-        # Notificar al usuario su conexión exitosa
+        # Notificar al usuario su conexión exitosa, con su número normalizado
+        # y las conversaciones guardadas en el servidor.
         await manager.send_to(phone, {
             "tipo": "sistema",
             "mensaje": f"Conectado como {phone}",
+            "telefono": phone,
             "usuarios_online": manager.active_users,
+            "conversaciones": manager.get_conversations(phone),
         })
         # Notificar a todos los demás que un usuario se conectó
         for user in manager.active_users:
@@ -216,6 +228,9 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
                     # Ejecutar análisis ML
                     analysis = _analyze_for_chat(predictor, texto)
 
+                    client_id = data.get("client_id")
+                    client_id = client_id[:64] if isinstance(client_id, str) and client_id else None
+
                     # Crear el mensaje con resultados del análisis
                     msg = ChatMessage(
                         id=manager.next_id(),
@@ -223,17 +238,23 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
                         destinatario=dest,
                         texto=texto,
                         timestamp=time.time(),
+                        client_id=client_id,
                         **analysis,
                     )
                     manager.store_message(msg)
 
                     msg_data = msg.to_dict()
 
-                    # Enviar confirmación al remitente
-                    await manager.send_to(phone, {"tipo": "mensaje_enviado", **msg_data})
-
                     # Enviar al destinatario (si está conectado)
                     delivered = await manager.send_to(dest, {"tipo": "mensaje_recibido", **msg_data})
+
+                    # Confirmación al remitente. client_id (incluido en msg_data) permite
+                    # a la app sustituir su mensaje provisional por el definitivo.
+                    await manager.send_to(phone, {
+                        "tipo": "mensaje_enviado",
+                        **msg_data,
+                        "entregado": delivered,
+                    })
 
                     if not delivered:
                         await manager.send_to(phone, {
@@ -266,9 +287,11 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
         except Exception:
             pass
         finally:
-            manager.disconnect(phone)
+            # Si esta sesión fue reemplazada por una reconexión, la nueva sigue activa:
+            # no se elimina ni se anuncia una desconexión falsa.
+            removed = manager.disconnect(phone, websocket)
             # Notificar a todos que un usuario se desconectó
-            for user in manager.active_users:
+            for user in (manager.active_users if removed else []):
                 await manager.send_to(user, {
                     "tipo": "usuario_desconectado",
                     "telefono": phone,

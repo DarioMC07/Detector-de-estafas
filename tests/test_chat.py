@@ -292,6 +292,80 @@ def test_history_request(trained_artifact):
             assert hist["mensajes"][0]["texto"] == "Mensaje de prueba"
 
 
+def test_system_message_includes_normalized_phone(trained_artifact, tmp_path, monkeypatch):
+    """El servidor devuelve el número normalizado para que la app identifique sus mensajes."""
+    monkeypatch.setenv("CHAT_DEVICES_PATH", str(tmp_path / "dispositivos.json"))
+    with TestClient(create_app(trained_artifact[0])) as client:
+        with client.websocket_connect("/ws/chat/70011223") as ws:
+            data = ws.receive_json()
+            assert data["telefono"] == "+59170011223"
+            assert data["conversaciones"] == {}
+
+
+def test_number_bound_to_first_device(trained_artifact, tmp_path, monkeypatch):
+    """Otro dispositivo no puede usar un número ya registrado (suplantación)."""
+    monkeypatch.setenv("CHAT_DEVICES_PATH", str(tmp_path / "dispositivos.json"))
+    with TestClient(create_app(trained_artifact[0])) as client:
+        with client.websocket_connect("/ws/chat/+59170000001?token=dispositivo-a-123456") as ws:
+            assert ws.receive_json()["tipo"] == "sistema"
+        # Otro token: rechazado
+        with client.websocket_connect("/ws/chat/+59170000001?token=dispositivo-b-654321") as ws:
+            with pytest.raises(WebSocketDisconnect) as exc:
+                ws.receive_json()
+            assert exc.value.code == 4003
+        # Sin token: rechazado
+        with client.websocket_connect("/ws/chat/+59170000001") as ws:
+            with pytest.raises(WebSocketDisconnect):
+                ws.receive_json()
+        # Mismo dispositivo: aceptado
+        with client.websocket_connect("/ws/chat/+59170000001?token=dispositivo-a-123456") as ws:
+            assert ws.receive_json()["tipo"] == "sistema"
+    assert (tmp_path / "dispositivos.json").exists()
+    assert "dispositivo-a" not in (tmp_path / "dispositivos.json").read_text()
+
+
+def test_reconnect_does_not_drop_new_session(trained_artifact, tmp_path, monkeypatch):
+    """Al reconectar, el cierre de la sesión anterior no elimina la nueva."""
+    monkeypatch.setenv("CHAT_DEVICES_PATH", str(tmp_path / "dispositivos.json"))
+    app = create_app(trained_artifact[0])
+    with TestClient(app) as client:
+        with client.websocket_connect("/ws/chat/+59170000002") as other:
+            other.receive_json()
+            old = client.websocket_connect("/ws/chat/+59170000001?token=tok-1234567890")
+            old_ws = old.__enter__()
+            old_ws.receive_json()
+            other.receive_json()  # usuario_conectado
+            with client.websocket_connect("/ws/chat/+59170000001?token=tok-1234567890") as new_ws:
+                assert new_ws.receive_json()["tipo"] == "sistema"
+                other.receive_json()  # usuario_conectado (reconexión)
+                try:
+                    old.__exit__(None, None, None)
+                except Exception:
+                    pass
+                assert app.state.chat_manager.is_online("+59170000001")
+                # El otro usuario puede seguir escribiéndole
+                other.send_json({"tipo": "mensaje", "destinatario": "+59170000001", "texto": "Hola"})
+                assert new_ws.receive_json()["tipo"] == "mensaje_recibido"
+
+
+def test_sender_confirmation_has_client_id_and_history_on_login(trained_artifact, tmp_path, monkeypatch):
+    """El remitente recibe su mensaje con client_id y lo recupera al volver a conectarse."""
+    monkeypatch.setenv("CHAT_DEVICES_PATH", str(tmp_path / "dispositivos.json"))
+    with TestClient(create_app(trained_artifact[0])) as client:
+        with client.websocket_connect("/ws/chat/+59170000001") as ws1:
+            ws1.receive_json()
+            ws1.send_json({"tipo": "mensaje", "destinatario": "77000002", "texto": "Hola", "client_id": "c-1"})
+            sent = ws1.receive_json()
+            assert sent["tipo"] == "mensaje_enviado"
+            assert sent["client_id"] == "c-1"
+            assert sent["remitente"] == "+59170000001"
+            assert sent["destinatario"] == "+59177000002"
+            assert sent["entregado"] is False
+        with client.websocket_connect("/ws/chat/77000002") as ws2:
+            data = ws2.receive_json()
+            assert data["conversaciones"]["+59170000001"][0]["texto"] == "Hola"
+
+
 def test_self_message_rejected(trained_artifact):
     """No se permite enviarse un mensaje a uno mismo."""
     app = create_app(trained_artifact[0])
