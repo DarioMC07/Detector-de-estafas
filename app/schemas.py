@@ -34,4 +34,10 @@ class AnalyzeResponse(BaseModel):
     explicacion: str
     recomendaciones: list[str]
     datos_demostrativos: bool
+    # Decisión táctica de Nivel 2 (campos añadidos; no alteran los anteriores)
+    accion_tactica: Literal["PERMITIR", "ADVERTIR", "BLOQUEAR_ENLACES"] = "PERMITIR"
+    categoria_fraude: Literal["CONVERSACION_GENUINA", "PHISHING_BANCARIO",
+                              "SUPLANTACION_IDENTIDAD", "PREMIO_FALSO"] = "CONVERSACION_GENUINA"
+    confianza_calibrada: float | None = None
+    motor_decision: str = "fast_path"
     aviso: str = DISCLAIMER

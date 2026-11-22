@@ -15,12 +15,27 @@ from app.chat_manager import (
     DeviceRegistry,
     normalize_phone,
 )
+from app.decision_engine import DecisionEngine
 from app.predictor import ModelUnavailable, Predictor
 from app.schemas import AnalyzeRequest, AnalyzeResponse, MAX_TEXT_LENGTH
-from app.signals import detect_signals, recommendations
+from app.signals import recommendations
 
 ROOT = Path(__file__).resolve().parents[1]
 STATIC = Path(__file__).resolve().parent / "static"
+
+
+def get_decision_engine(state) -> DecisionEngine:
+    """Devuelve el motor del estado de la app; lo crea si falta o si cambió el predictor.
+
+    Permite usar la app aunque no se haya ejecutado el lifespan (p. ej. clientes que
+    montan la app con httpx.ASGITransport y asignan solo ``state.predictor``).
+    """
+    engine = getattr(state, "decision_engine", None)
+    if engine is None or engine.predictor is not state.predictor:
+        engine = DecisionEngine(state.predictor)
+        engine.iniciar()
+        state.decision_engine = engine
+    return engine
 
 
 def create_app(model_path: Path | None = None, low: float | None = None, high: float | None = None):
@@ -33,7 +48,15 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
         )
         registry_path = Path(os.getenv("CHAT_DEVICES_PATH", str(ROOT / "data" / "dispositivos_chat.json")))
         application.state.chat_manager = ConnectionManager(DeviceRegistry(registry_path))
-        yield
+        # Nivel 2: el backend (Laya) se carga en segundo plano; mientras tanto, o si no
+        # está instalado, el motor usa el árbitro heurístico local.
+        engine = DecisionEngine(application.state.predictor)
+        engine.iniciar()
+        application.state.decision_engine = engine
+        try:
+            yield
+        finally:
+            engine.cerrar()
 
     # El esquema JSON es local; no cargar Swagger/ReDoc desde CDN de terceros.
     application = FastAPI(title="Mensaje Seguro", version="2.0.0", lifespan=lifespan,
@@ -78,16 +101,19 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
             "modelo_disponible": predictor.available,
             "datos_demostrativos": predictor.metadata.get("datos_demostrativos") if predictor.available else None,
             "longitud_maxima": MAX_TEXT_LENGTH,
+            "motor_decision": get_decision_engine(request.app.state).estado_backend,
         }
 
     @application.post("/analizar", response_model=AnalyzeResponse)
     def analyze(payload: AnalyzeRequest, request: Request):
         predictor = request.app.state.predictor
-        prediction = predictor.classify(payload.texto)
+        engine = get_decision_engine(request.app.state)
+        # Lanza ModelUnavailable (503) igual que antes si no hay modelo.
+        evaluation = engine.evaluar(payload.texto)
+        prediction, signals = evaluation.prediccion, evaluation.senales
         label = prediction.etiqueta
         category = "Legítimo según el modelo" if label == "legitimo" else "Fraudulento según el modelo"
         level = "bajo" if label == "legitimo" else "alto"
-        signals = detect_signals(payload.texto)
         explanations = {
             "legitimo": "El clasificador ha elegido la clase legítimo. Es una predicción del modelo, no una verificación de autenticidad ni una garantía de seguridad.",
             "fraudulento": "El clasificador ha elegido la clase fraudulento. Es una predicción del modelo, no una confirmación de fraude. Comprueba la solicitud por otra vía antes de actuar.",
@@ -108,47 +134,13 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
             aviso_incertidumbre=uncertainty_notice,
             recomendaciones=recommendations("medio" if prediction.incertidumbre else level, signals),
             datos_demostrativos=predictor.metadata["datos_demostrativos"],
+            **DecisionEngine.campos_decision(evaluation.decision),
         )
-
-    def _analyze_for_chat(predictor: Predictor, text: str) -> dict:
-        """Ejecuta el análisis ML y devuelve los campos relevantes para el chat."""
-        try:
-            prediction = predictor.classify(text)
-        except ModelUnavailable:
-            return {
-                "etiqueta_modelo": "desconocido",
-                "nivel": "desconocido",
-                "incertidumbre": False,
-                "aviso_incertidumbre": None,
-                "senales": [],
-                "recomendaciones": ["El modelo no está disponible. Sé precavido con este mensaje."],
-                "datos_demostrativos": False,
-            }
-        label = prediction.etiqueta
-        level = "bajo" if label == "legitimo" else "alto"
-        signals = detect_signals(text)
-        if label == "fraudulento":
-            effective_level = "alto" if signals else ("medio" if prediction.incertidumbre else "alto")
-        else:
-            effective_level = "medio" if prediction.incertidumbre else "bajo"
-        uncertainty_notice = (
-            "Resultado incierto: la puntuación está en la zona intermedia."
-            if (prediction.incertidumbre and not signals) else None
-        )
-        return {
-            "etiqueta_modelo": label,
-            "nivel": effective_level,
-            "incertidumbre": prediction.incertidumbre and not bool(signals),
-            "aviso_incertidumbre": uncertainty_notice,
-            "senales": [{"codigo": s.codigo, "titulo": s.titulo, "descripcion": s.descripcion} for s in signals],
-            "recomendaciones": recommendations(effective_level, signals),
-            "datos_demostrativos": predictor.metadata.get("datos_demostrativos", False),
-        }
 
     @application.websocket("/ws/chat/{telefono}")
     async def websocket_chat(websocket: WebSocket, telefono: str):
         manager: ConnectionManager = websocket.app.state.chat_manager
-        predictor: Predictor = websocket.app.state.predictor
+        engine = get_decision_engine(websocket.app.state)
 
         try:
             phone = normalize_phone(telefono)
@@ -225,8 +217,8 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
                         })
                         continue
 
-                    # Ejecutar análisis ML
-                    analysis = _analyze_for_chat(predictor, texto)
+                    # Cascada Nivel 1 → Nivel 2 (nunca lanza excepciones)
+                    analysis = engine.evaluar_mensaje(texto, remitente=phone, destinatario=dest)
 
                     client_id = data.get("client_id")
                     client_id = client_id[:64] if isinstance(client_id, str) and client_id else None

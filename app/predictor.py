@@ -26,6 +26,9 @@ class ModelUnavailable(RuntimeError):
 class Prediction:
     etiqueta: str
     incertidumbre: bool
+    # Puntuación interna de la clase "fraudulento" (uso interno del motor de decisión;
+    # no se publica en la API porque no es una probabilidad calibrada).
+    puntuacion: float | None = None
 
 
 class Predictor:
@@ -73,4 +76,4 @@ class Predictor:
         except Exception:
             raise ModelUnavailable("No se pudo usar el modelo. Vuelve a entrenarlo y reinicia la API.") from None
         # La incertidumbre es un aviso independiente; nunca una tercera clase.
-        return Prediction(label, self.low <= score < self.high)
+        return Prediction(label, self.low <= score < self.high, score)

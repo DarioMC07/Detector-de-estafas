@@ -28,6 +28,11 @@ class ChatMessage:
     senales: list[dict[str, str]] = field(default_factory=list)
     recomendaciones: list[str] = field(default_factory=list)
     datos_demostrativos: bool = False
+    # Decisión táctica de Nivel 2 (campos nuevos; la app actual los ignora sin problema)
+    accion_tactica: str = "PERMITIR"
+    categoria_fraude: str = "CONVERSACION_GENUINA"
+    confianza_calibrada: float | None = None
+    motor_decision: str = "fast_path"
     # Identificador provisional que asigna la app al enviar (para evitar duplicados al reconectar)
     client_id: str | None = None
 

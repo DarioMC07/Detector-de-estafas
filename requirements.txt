@@ -7,3 +7,12 @@ httpx==0.28.1
 pytest==8.3.5
 python-telegram-bot>=21.0
 python-dotenv>=1.0.0
+
+# --- Nivel 2 (opcional): runtime local de decisión táctica (Laya) ---
+# El sistema funciona sin estas dependencias: app/decision_engine.py usa el árbitro
+# heurístico local si el módulo no está instalado. Descomenta e instala SOLO el paquete
+# verificado que corresponda a tu modelo Laya (nombre/versión exactos del proveedor),
+# más su runtime (p. ej. torch / transformers) si lo requiere:
+# laya==<version>
+# torch==<version>
+# transformers==<version>

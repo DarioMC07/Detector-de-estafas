@@ -147,3 +147,13 @@ texto,etiqueta
 "Tía se me arruinó el celular, estoy varado en la terminal, ¿puedes prestarme dinero por QR urgente?",fraudulento
 "Servicio de Impuestos: Tienes una deuda pendiente con orden de embargo. Paga de inmediato en https://pago-multas.online",fraudulento
 "Tu paquete no pudo ser entregado por falta de dirección. Paga los costos de reenvío en https://rastreo-paqueteria.com",fraudulento
+"Bien y tu?",legitimo
+"Bien, ¿y tú?",legitimo
+"Todo bien y tu?",legitimo
+"Muy bien gracias, ¿y tú qué tal?",legitimo
+"Aquí tranquilo, ¿y tú?",legitimo
+"Bien bien, ¿tú cómo andas?",legitimo
+"Sí, nos vemos luego",legitimo
+"Dale, gracias",legitimo
+"Jaja sí, tal cual",legitimo
+"Ya llegué, ¿tú dónde estás?",legitimo
