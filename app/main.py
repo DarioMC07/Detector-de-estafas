@@ -60,7 +60,7 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
 
     # El esquema JSON es local; no cargar Swagger/ReDoc desde CDN de terceros.
     application = FastAPI(title="Mensaje Seguro", version="2.0.0", lifespan=lifespan,
-                          docs_url=None, redoc_url=None)
+                          docs_url="/docs", redoc_url="/redoc")
 
     @application.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError):
@@ -79,11 +79,12 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
         response.headers["Cache-Control"] = "no-store"
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "no-referrer"
-        response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; script-src 'self'; style-src 'self'; "
-            "img-src 'self'; connect-src 'self' ws: wss:; object-src 'none'; "
-            "base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
-        )
+        if not any(request.url.path.startswith(p) for p in ("/docs", "/redoc", "/openapi.json")):
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'self'; script-src 'self'; style-src 'self'; "
+                "img-src 'self'; connect-src 'self' ws: wss:; object-src 'none'; "
+                "base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+            )
         return response
 
     @application.get("/", include_in_schema=False)
