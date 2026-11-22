@@ -1,20 +1,27 @@
 """Motor de decisión táctica en cascada.
 
 Nivel 1 (sensor, ``app.predictor`` + ``app.signals``): clasificador TF-IDF y reglas
-léxicas. Rápido (<2 ms) y siempre disponible si hay modelo entrenado.
+léxicas. Rápido (<2 ms). Su puntuación es una CARACTERÍSTICA para el Nivel 2.
 
-Nivel 2 (árbitro): decide la acción táctica (PERMITIR / ADVERTIR / BLOQUEAR_ENLACES)
-y la categoría de fraude. Usa un runtime local de decisión (Laya) si está instalado;
-si no lo está, falla, devuelve algo inválido o tarda más del presupuesto (50 ms por
-defecto), se usa el árbitro heurístico local. Esta capa nunca lanza excepciones
-hacia el chat.
+Nivel 2 (árbitro, Laya): modelo entrenado en ``training/train_laya.py`` que combina la
+puntuación del Nivel 1 con señales, análisis de enlaces y rasgos de estilo, y devuelve
+una probabilidad de fraude CALIBRADA. Sobre esa probabilidad se aplica una política
+explícita que decide el veredicto final que ve la app:
 
-Garantías de compatibilidad:
-- Los campos existentes (etiqueta_modelo, nivel, incertidumbre, senales,
-  recomendaciones...) se calculan exactamente igual que antes. El Nivel 2 solo
-  AÑADE campos nuevos; no reescribe la decisión del Nivel 1.
-- El Nivel 2 no puede rebajar el riesgo por debajo de un "piso" derivado del
-  Nivel 1 (si el clasificador dice fraudulento, la acción mínima es ADVERTIR).
+    p < 0.40            -> legítimo (nivel bajo)        -> PERMITIR
+    0.40 <= p < 0.65    -> dudoso   (nivel medio)       -> ADVERTIR
+    p >= 0.65           -> fraude   (nivel alto)        -> ADVERTIR / BLOQUEAR_ENLACES
+
+Reglas de seguridad deterministas sobre enlaces (aplican siempre):
+- Enlace "peligroso" (imita un banco/marca, IP, punycode): como mínimo nivel medio y
+  BLOQUEAR_ENLACES; si además hay otra evidencia, fraude.
+- Enlace "sospechoso" (http sin cifrar, acortador, TLD de riesgo): como mínimo
+  nivel medio y ADVERTIR.
+- Enlaces "confiables" (Instagram, YouTube, bancos oficiales...): no suman riesgo.
+
+Fast-path: puntuación del Nivel 1 < 0.20 y cero señales -> PERMITIR sin invocar Laya.
+Fallback: si Laya no está disponible, falla o tarda más de 50 ms, se usa la decisión
+del Nivel 1 con las mismas reglas de enlaces. ``evaluar_mensaje`` nunca lanza.
 
 Privacidad: no se registra el texto ni los números de teléfono.
 """
@@ -22,50 +29,58 @@ Privacidad: no se registra el texto ni los números de teléfono.
 from __future__ import annotations
 
 import importlib
-import importlib.util
 import math
 import os
-import re
 import threading
 import time
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Callable, Protocol
+
+import joblib
+import sklearn
+from threadpoolctl import ThreadpoolController
 
 from app.predictor import ModelUnavailable, Prediction, Predictor, clean_chat_elongation
 from app.schemas import Signal
-from app.signals import detect_signals, normalize, recommendations
+from app.signals import CODIGOS_ENLACE_RIESGO, detect_signals, recommendations
+from app.text_features import CARACTERISTICAS, caracteristicas_laya, contexto_rapido
+from app.url_analysis import ReporteEnlaces, analizar_enlaces
 
 ACCIONES = ("PERMITIR", "ADVERTIR", "BLOQUEAR_ENLACES")
-CATEGORIAS = ("CONVERSACION_GENUINA", "PHISHING_BANCARIO", "SUPLANTACION_IDENTIDAD", "PREMIO_FALSO")
-_SEVERIDAD = {accion: i for i, accion in enumerate(ACCIONES)}
-
-# Fast-path: por debajo de esta puntuación y sin señales, no se invoca el Nivel 2.
+CATEGORIAS = ("CONVERSACION_GENUINA", "PHISHING_BANCARIO", "SUPLANTACION_IDENTIDAD", "PREMIO_FALSO", "OTRO_FRAUDE")
 FAST_PATH_MAX_SCORE = 0.20
+UMBRAL_ADVERTENCIA = 0.40
+UMBRAL_FRAUDE = 0.65
+_SENALES_FUERTES = frozenset({"credenciales", "dinero", "urgencia", "premio", "suplantacion"})
 
-# Contexto bancario (Bolivia y genérico). Texto ya normalizado (minúsculas, sin tildes).
-_BANCARIO_RE = re.compile(
-    r"\b(bancos?|bancari\w*|banca (?:movil|por internet)|homebanking|cuenta bancaria|tu cuenta|"
-    r"tarjeta(?:s)? de (?:credito|debito)|bnb|bcp|bisa|mercantil|banco union|banco sol|"
-    r"fassil|ganadero|economico|tigo money|billetera movil)\b"
-)
-# Patrones típicos de suplantación ("cambié de número", "soy tu hijo"...).
-_SUPLANTACION_RE = re.compile(
-    r"\b(cambie (?:de|mi) (?:numero|celular|cel)|(?:es|este es) mi nuevo (?:numero|celular|cel)|"
-    r"nuevo numero|guarda (?:este|mi) numero|soy tu (?:hij[oa]|mama|papa|herman[oa]|prim[oa]|ti[oa]|jefe)|"
-    r"adivina quien soy|no me reconoces|te escribo de (?:otro|este) numero)\b"
-)
+_MOTIVO_TEXTO = {
+    "http_sin_cifrar": "que usa http:// sin cifrar (lo habitual es https://)",
+    "acortador": "acortado que oculta su destino real",
+    "tld_sospechoso": "con una terminación de dominio muy usada en fraudes",
+    "palabras_cebo": "con palabras cebo en el dominio",
+    "dominio_enrevesado": "con un dominio enrevesado",
+    "imita_marca": "que imita a un banco o marca conocida",
+    "direccion_ip": "que apunta a una dirección IP",
+    "punycode": "con caracteres que imitan letras normales",
+    "arroba_oculta_destino": "que oculta su destino real",
+}
 
 
 @dataclass(frozen=True)
 class DecisionTactica:
     accion: str
     categoria: str
-    # Solo tiene valor cuando lo produce un modelo calibrado (Laya). La heurística
-    # no está calibrada, así que deja None en vez de inventar una probabilidad.
+    # Probabilidad calibrada de la clase elegida. Solo existe cuando decide Laya;
+    # la heurística no está calibrada y deja None en vez de inventar un número.
     confianza_calibrada: float | None
     motor: str  # "fast_path" | "laya" | "heuristico" | "heuristico_sin_modelo"
+    etiqueta: str = "legitimo"      # veredicto final: "legitimo" | "fraudulento"
+    nivel: str = "bajo"             # "bajo" | "medio" | "alto"
+    incierto: bool = False
+    aviso: str | None = None
 
 
 @dataclass(frozen=True)
@@ -76,22 +91,69 @@ class Evaluacion:
 
 
 class TacticalBackend(Protocol):
-    """Contrato mínimo de un árbitro de Nivel 2."""
+    """Contrato del árbitro de Nivel 2."""
 
     def decidir(self, caracteristicas: dict[str, Any]) -> dict[str, Any]:
-        """Devuelve {"accion": ..., "categoria": ..., "confianza": float en [0, 1]}."""
+        """Devuelve {"probabilidad_fraude": float en [0, 1], "categoria": str | None}."""
 
 
 class BackendUnavailable(RuntimeError):
     pass
 
 
-class LayaBackend:
-    """Adaptador al runtime local de Laya.
+_CONTROLADOR_HILOS: ThreadpoolController | None = None
 
-    Interfaz supuesta (ajústala a la API real del paquete que instales):
-    el módulo expone ``load_decision_model(path)`` (o ``load(path)``) y el objeto
-    devuelto tiene ``decide(features: dict) -> dict``.
+
+def _hilos() -> ThreadpoolController:
+    """Controlador de hilos nativos creado una vez (escanear librerías en cada llamada es caro)."""
+    global _CONTROLADOR_HILOS
+    if _CONTROLADOR_HILOS is None:
+        _CONTROLADOR_HILOS = ThreadpoolController()
+    return _CONTROLADOR_HILOS
+
+
+class LayaLocalBackend:
+    """Laya entrenado localmente (artefacto ``laya.joblib`` de training/train_laya.py)."""
+
+    def __init__(self, path: Path) -> None:
+        # Solo artefactos propios: joblib puede ejecutar código al deserializar.
+        artefacto = joblib.load(path)
+        if not isinstance(artefacto, dict) or artefacto.get("formato") != 1 or artefacto.get("tipo") != "laya-local":
+            raise BackendUnavailable("Artefacto Laya incompatible.")
+        if artefacto.get("caracteristicas") != list(CARACTERISTICAS):
+            raise BackendUnavailable("Las características del artefacto no coinciden; reentrena.")
+        riesgo = artefacto.get("riesgo")
+        if not hasattr(riesgo, "predict_proba"):
+            raise BackendUnavailable("Modelo de riesgo inválido.")
+        self._riesgo = riesgo
+        self._categoria = artefacto.get("categoria")
+        umbrales = artefacto.get("umbrales") or {}
+        self.umbrales = {
+            "advertencia": float(umbrales.get("advertencia", UMBRAL_ADVERTENCIA)),
+            "fraude": float(umbrales.get("fraude", UMBRAL_FRAUDE)),
+        }
+        # Calentamiento: la primera inferencia de sklearn es más lenta.
+        self.decidir({"texto": "hola, nos vemos mañana", "probabilidad_lexica": 0.1, "senales": []})
+
+    def decidir(self, caracteristicas: dict[str, Any]) -> dict[str, Any]:
+        texto = caracteristicas["texto"]
+        x = caracteristicas_laya(texto, caracteristicas["probabilidad_lexica"],
+                                 frozenset(caracteristicas.get("senales", ())))
+        # Una sola fila: arrancar hilos OpenMP cuesta más que la propia predicción.
+        with _hilos().limit(limits=1), sklearn.config_context(assume_finite=True):
+            p = float(self._riesgo.predict_proba([x])[0][1])
+            categoria = None
+            if self._categoria is not None and p >= self.umbrales["advertencia"]:
+                categoria = str(self._categoria.predict([texto])[0])
+        return {"probabilidad_fraude": p, "categoria": categoria}
+
+
+class LayaModuleBackend:
+    """Adaptador para un runtime Laya externo (``LAYA_MODULE``).
+
+    Interfaz esperada: el módulo expone ``load_decision_model(path)`` (o ``load``) y el
+    objeto devuelto tiene ``decide(features: dict) -> dict`` con el mismo contrato que
+    ``TacticalBackend`` (probabilidad_fraude calibrada + categoria).
     """
 
     def __init__(self, module_name: str, model_path: str | None = None) -> None:
@@ -109,35 +171,62 @@ class LayaBackend:
         return self._decide(caracteristicas)
 
 
-def laya_backend_from_env() -> TacticalBackend | None:
-    """Crea el backend Laya según variables de entorno, o None si no procede."""
+def crear_backend_por_defecto(predictor: Predictor) -> TacticalBackend | None:
+    """Laya externo si LAYA_MODULE está definido; si no, el artefacto local laya.joblib."""
     if os.getenv("LAYA_ENABLED", "1").strip().lower() in ("0", "false", "no", "off"):
         return None
-    module_name = os.getenv("LAYA_MODULE", "laya").strip() or "laya"
-    try:
-        if importlib.util.find_spec(module_name) is None:
-            return None
-    except (ImportError, ValueError):
+    module_name = (os.getenv("LAYA_MODULE") or "").strip()
+    model_path = (os.getenv("LAYA_MODEL_PATH") or "").strip() or None
+    if module_name:
+        return LayaModuleBackend(module_name, model_path)
+    base = getattr(predictor, "path", None)
+    path = Path(model_path) if model_path else (Path(base).parent / "laya.joblib" if base else None)
+    if path is None or not path.exists():
         return None
-    return LayaBackend(module_name, os.getenv("LAYA_MODEL_PATH") or None)
+    return LayaLocalBackend(path)
 
 
-def _max_accion(a: str, b: str) -> str:
-    return a if _SEVERIDAD[a] >= _SEVERIDAD[b] else b
+def categoria_heuristica(texto: str, codigos: set[str] | frozenset[str]) -> str:
+    ctx = contexto_rapido(texto)
+    if ctx["robo_codigo"]:
+        return "PHISHING_BANCARIO"  # robo de credenciales (código de verificación)
+    if "premio" in codigos:
+        return "PREMIO_FALSO"
+    if ctx["suplantacion"] or "suplantacion" in codigos:
+        return "SUPLANTACION_IDENTIDAD"
+    if ctx["bancario"] or ctx["peticion_datos"] or "credenciales" in codigos or "enlace_suplantacion" in codigos:
+        return "PHISHING_BANCARIO"
+    return "OTRO_FRAUDE"
+
+
+def _aviso_enlace(reporte: ReporteEnlaces) -> str:
+    motivos = []
+    for enlace in reporte.enlaces:
+        if enlace.nivel in ("sospechoso", "peligroso"):
+            motivos.extend(m for m in enlace.motivos if m not in motivos)
+    detalle = " y ".join(_MOTIVO_TEXTO[m] for m in motivos[:2]) if motivos else "con riesgo"
+    return (f"Precaución: el mensaje contiene un enlace {detalle}. "
+            "No lo abras ni ingreses datos personales o bancarios.")
+
+
+_SENTINEL = object()
 
 
 class DecisionEngine:
-    """Orquesta la cascada Nivel 1 → (fast-path | Nivel 2 | fallback heurístico)."""
+    """Orquesta la cascada Nivel 1 → (fast-path | Laya | fallback)."""
 
     def __init__(
         self,
         predictor: Predictor,
-        backend_factory: Callable[[], TacticalBackend | None] | None = laya_backend_from_env,
+        backend_factory: Callable[[], TacticalBackend | None] | None | object = _SENTINEL,
         timeout: float | None = None,
         max_fallos: int = 3,
         enfriamiento: float = 60.0,
+        max_workers: int = 4,
     ) -> None:
         self.predictor = predictor
+        if backend_factory is _SENTINEL:
+            backend_factory = lambda: crear_backend_por_defecto(predictor)  # noqa: E731
         self._factory = backend_factory
         if timeout is None:
             try:
@@ -147,15 +236,16 @@ class DecisionEngine:
         self.timeout = timeout if math.isfinite(timeout) and timeout > 0 else 0.05
         self.max_fallos = max_fallos
         self.enfriamiento = enfriamiento
+        self.umbral_advertencia = UMBRAL_ADVERTENCIA
+        self.umbral_fraude = UMBRAL_FRAUDE
 
         self._lock = threading.Lock()
-        # Un solo hilo: si una inferencia se cuelga, las siguientes van directas al
-        # fallback en vez de acumular una cola (ver _invocar_backend).
-        self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="nivel2")
+        self._max_workers = max(1, max_workers)
+        self._executor = ThreadPoolExecutor(max_workers=self._max_workers, thread_name_prefix="laya")
         self._backend: TacticalBackend | None = None
         self._estado = "pendiente"  # pendiente | cargando | listo | no_disponible
-        self._carga: Future | None = None
-        self._en_curso: Future | None = None
+        self._carga = None
+        self._en_vuelo = 0
         self._fallos = 0
         self._pausado_hasta = 0.0
 
@@ -167,25 +257,25 @@ class DecisionEngine:
             return "en_pausa"
         return self._estado
 
-    def iniciar(self) -> None:
-        """Lanza la carga diferida del backend en segundo plano (no bloquea)."""
+    def iniciar(self, espera: float = 0.0) -> None:
+        """Carga el backend en segundo plano; ``espera`` segundos como máximo de bloqueo."""
         with self._lock:
-            if self._estado != "pendiente" or self._factory is None:
+            if self._estado == "pendiente":
                 if self._factory is None:
                     self._estado = "no_disponible"
-                return
-            self._estado = "cargando"
-            self._carga = self._executor.submit(self._cargar)
-
-    def cargar_backend(self, timeout: float | None = None) -> str:
-        """Carga el backend y espera el resultado (útil en pruebas y scripts)."""
-        self.iniciar()
-        carga = self._carga
-        if carga is not None:
+                else:
+                    self._estado = "cargando"
+                    self._carga = self._executor.submit(self._cargar)
+            carga = self._carga
+        if espera > 0 and carga is not None:
             try:
-                carga.result(timeout=timeout)
+                carga.result(timeout=espera)
             except Exception:
                 pass
+
+    def cargar_backend(self, timeout: float | None = 10.0) -> str:
+        """Carga el backend y espera el resultado (útil en pruebas y scripts)."""
+        self.iniciar(espera=timeout or 10.0)
         return self.estado_backend
 
     def _cargar(self) -> None:
@@ -195,6 +285,10 @@ class DecisionEngine:
             backend = None
         with self._lock:
             self._backend = backend
+            umbrales = getattr(backend, "umbrales", None)
+            if isinstance(umbrales, dict):
+                self.umbral_advertencia = float(umbrales.get("advertencia", UMBRAL_ADVERTENCIA))
+                self.umbral_fraude = float(umbrales.get("fraude", UMBRAL_FRAUDE))
             self._estado = "listo" if backend is not None else "no_disponible"
 
     def _backend_disponible(self) -> TacticalBackend | None:
@@ -212,91 +306,149 @@ class DecisionEngine:
                 self._pausado_hasta = time.monotonic() + self.enfriamiento
                 self._fallos = 0
 
-    def _invocar_backend(self, backend: TacticalBackend, caracteristicas: dict[str, Any]) -> DecisionTactica | None:
+    def _terminado(self, _futuro) -> None:
         with self._lock:
-            if self._en_curso is not None and not self._en_curso.done():
-                return None  # ocupado con una inferencia lenta: no encolar
-            futuro = self._executor.submit(backend.decidir, dict(caracteristicas))
-            self._en_curso = futuro
+            self._en_vuelo -= 1
+
+    def _invocar_backend(self, backend: TacticalBackend, caracteristicas: dict[str, Any]) -> tuple[float, str | None] | None:
+        with self._lock:
+            if self._en_vuelo >= self._max_workers:
+                return None  # todos los hilos ocupados (inferencias lentas): no encolar
+            self._en_vuelo += 1
         try:
-            bruto = futuro.result(timeout=self.timeout)
-            decision = self._validar_salida(bruto)
+            futuro = self._executor.submit(backend.decidir, dict(caracteristicas))
+        except RuntimeError:  # executor cerrado
+            self._terminado(None)
+            return None
+        futuro.add_done_callback(self._terminado)
+        try:
+            salida = self._validar_salida(futuro.result(timeout=self.timeout))
         except (FutureTimeout, Exception):
             self._registrar_fallo()
             return None
         with self._lock:
             self._fallos = 0
-        return decision
+        return salida
 
     @staticmethod
-    def _validar_salida(bruto: Any) -> DecisionTactica:
+    def _validar_salida(bruto: Any) -> tuple[float, str | None]:
         if not isinstance(bruto, dict):
             raise ValueError("Salida no es un dict")
-        accion = bruto.get("accion", bruto.get("accion_tactica"))
-        categoria = bruto.get("categoria", bruto.get("categoria_fraude"))
-        confianza = bruto.get("confianza", bruto.get("confianza_calibrada"))
-        if accion not in ACCIONES or categoria not in CATEGORIAS:
-            raise ValueError("Acción o categoría desconocida")
-        if isinstance(confianza, bool) or not isinstance(confianza, (int, float)):
-            raise ValueError("Confianza inválida")
-        confianza = float(confianza)
-        if not math.isfinite(confianza) or not 0.0 <= confianza <= 1.0:
-            raise ValueError("Confianza fuera de rango")
-        return DecisionTactica(accion, categoria, round(confianza, 4), "laya")
+        p = bruto.get("probabilidad_fraude")
+        if isinstance(p, bool) or not isinstance(p, (int, float)):
+            raise ValueError("Probabilidad inválida")
+        p = float(p)
+        if not math.isfinite(p) or not 0.0 <= p <= 1.0:
+            raise ValueError("Probabilidad fuera de rango")
+        categoria = bruto.get("categoria")
+        if categoria is not None and categoria not in CATEGORIAS:
+            raise ValueError("Categoría desconocida")
+        return p, categoria
 
     def cerrar(self) -> None:
         self._executor.shutdown(wait=False, cancel_futures=True)
 
-    # -------------------------------------------------------------- heurística
+    # ------------------------------------------------------------------ políticas
 
-    @staticmethod
-    def _contexto(texto: str) -> tuple[bool, bool]:
-        norm = normalize(clean_chat_elongation(texto))
-        return bool(_BANCARIO_RE.search(norm)), bool(_SUPLANTACION_RE.search(norm))
-
-    @classmethod
-    def decision_heuristica(cls, texto: str, prediccion: Prediction | None, senales: list[Signal]) -> DecisionTactica:
-        """Árbitro local de respaldo. Reglas transparentes, sin confianza calibrada."""
+    def politica_laya(self, texto: str, p: float, categoria_modelo: str | None, prediccion: Prediction,
+                      senales: list[Signal], reporte: ReporteEnlaces) -> DecisionTactica:
         codigos = {s.codigo for s in senales}
-        bancario, suplantacion = cls._contexto(texto)
-        fraudulento = prediccion is not None and prediccion.etiqueta == "fraudulento"
-        incierto = prediccion is None or prediccion.incertidumbre
+        fuertes = codigos & _SENALES_FUERTES
+        enlace = reporte.nivel_maximo
+        fraude = p >= self.umbral_fraude
+        dudoso = self.umbral_advertencia <= p < self.umbral_fraude
+        aviso = None
+        ctx = contexto_rapido(texto)
+        fraude_modelo = fraude
+        # Regla de seguridad: pedir que reenvíen un código recibido = robo de cuenta.
+        if ctx["robo_codigo"]:
+            fraude = True
+        # Zona dudosa + patrón de alto riesgo inequívoco (pedir claves/PIN, pagar antes de
+        # recibir, "número nuevo" pidiendo dinero, acortador con dinero/urgencia) -> fraude.
+        alto_riesgo = ctx["peticion_datos"] or ctx["pago_previo"] or (
+            (ctx["suplantacion"] or "suplantacion" in codigos) and "dinero" in codigos) or (
+            reporte.tiene_motivo("acortador") and bool(fuertes))
+        if dudoso and alto_riesgo:
+            fraude, dudoso = True, False
+        # Salvaguarda ante un posible error de Laya: Nivel 1 muy seguro + varias señales fuertes.
+        if not fraude and not dudoso and prediccion.etiqueta == "fraudulento" \
+                and (prediccion.puntuacion or 0) >= 0.9 and len(fuertes) >= 2:
+            dudoso = True
+        if enlace == "peligroso":
+            if p >= self.umbral_advertencia or fuertes:
+                fraude = True
+            else:
+                dudoso = True
+        elif enlace == "sospechoso" and not fraude:
+            dudoso = True
+            aviso = _aviso_enlace(reporte)
+        if enlace == "peligroso" and not fraude:
+            aviso = _aviso_enlace(reporte)
 
-        if "premio" in codigos:
-            categoria = "PREMIO_FALSO"
-        elif bancario and codigos & {"credenciales", "enlace", "urgencia", "dinero"}:
-            categoria = "PHISHING_BANCARIO"
-        elif suplantacion:
-            categoria = "SUPLANTACION_IDENTIDAD"
-        elif fraudulento and codigos & {"credenciales", "enlace"}:
-            categoria = "PHISHING_BANCARIO"
-        elif fraudulento and "dinero" in codigos:
-            categoria = "SUPLANTACION_IDENTIDAD"
+        if fraude:
+            # Si el fraude lo decidió una regla (no el modelo), no hay confianza calibrada.
+            etiqueta, nivel, confianza = "fraudulento", "alto", (p if fraude_modelo else None)
+        elif dudoso:
+            etiqueta, nivel, confianza = "legitimo", "medio", max(p, 1 - p)
+            if aviso is None:
+                aviso = ("Resultado incierto: el motor de decisión no tiene certeza suficiente. "
+                         "Revisa el mensaje con calma antes de actuar.")
         else:
-            categoria = "CONVERSACION_GENUINA"
+            etiqueta, nivel, confianza = "legitimo", "bajo", 1 - p
 
-        sospechoso = fraudulento or categoria != "CONVERSACION_GENUINA"
-        if "enlace" in codigos and sospechoso:
+        enlace_riesgo = bool(codigos & CODIGOS_ENLACE_RIESGO)
+        if enlace == "peligroso" or (fraude and reporte.total and not reporte.solo_confiables):
             accion = "BLOQUEAR_ENLACES"
-        elif sospechoso or incierto or codigos & {"credenciales", "dinero", "urgencia"}:
+        elif fraude or dudoso or enlace_riesgo:
             accion = "ADVERTIR"
         else:
             accion = "PERMITIR"
-        motor = "heuristico" if prediccion is not None else "heuristico_sin_modelo"
-        return DecisionTactica(accion, categoria, None, motor)
+
+        # La categoría de fraude solo se informa con evidencia (no por un simple enlace http).
+        if fraude or (p >= self.umbral_advertencia and fuertes):
+            categoria = categoria_modelo if categoria_modelo in CATEGORIAS[1:] else categoria_heuristica(texto, codigos)
+        else:
+            categoria = "CONVERSACION_GENUINA"
+        return DecisionTactica(accion, categoria, None if confianza is None else round(confianza, 4), "laya",
+                               etiqueta, nivel, nivel == "medio", aviso)
 
     @staticmethod
-    def _armonizar(decision: DecisionTactica, respaldo: DecisionTactica,
-                   prediccion: Prediction, senales: list[Signal]) -> DecisionTactica:
-        """Evita conflictos entre niveles: el Nivel 2 no rebaja el piso del Nivel 1."""
-        piso = "ADVERTIR" if prediccion.etiqueta == "fraudulento" else "PERMITIR"
-        accion = _max_accion(decision.accion, piso)
-        if accion == "BLOQUEAR_ENLACES" and "enlace" not in {s.codigo for s in senales}:
-            accion = "ADVERTIR"  # no hay enlaces que bloquear
-        categoria = decision.categoria
-        if accion != "PERMITIR" and categoria == "CONVERSACION_GENUINA":
-            categoria = respaldo.categoria
-        return DecisionTactica(accion, categoria, decision.confianza_calibrada, decision.motor)
+    def politica_respaldo(texto: str, prediccion: Prediction | None, senales: list[Signal],
+                          reporte: ReporteEnlaces, motor: str = "heuristico") -> DecisionTactica:
+        """Sin Laya: decisión del Nivel 1 (como antes) + las mismas reglas de enlaces."""
+        codigos = {s.codigo for s in senales}
+        enlace = reporte.nivel_maximo
+        if prediccion is None:
+            etiqueta, nivel, incierto = "desconocido", "desconocido", False
+        else:
+            etiqueta = prediccion.etiqueta
+            if etiqueta == "fraudulento":
+                nivel = "alto" if senales else ("medio" if prediccion.incertidumbre else "alto")
+            else:
+                nivel = "medio" if prediccion.incertidumbre else "bajo"
+            incierto = prediccion.incertidumbre and not senales
+        aviso = "Resultado incierto: la puntuación está en la zona intermedia." if incierto else None
+        if prediccion is not None and contexto_rapido(texto)["robo_codigo"]:
+            etiqueta, nivel, incierto, aviso = "fraudulento", "alto", False, None
+        if enlace == "peligroso" and prediccion is not None:
+            if codigos & _SENALES_FUERTES:
+                etiqueta, nivel = "fraudulento", "alto"
+            elif nivel == "bajo":
+                nivel, incierto, aviso = "medio", True, _aviso_enlace(reporte)
+        elif enlace == "sospechoso" and nivel == "bajo":
+            nivel, incierto, aviso = "medio", True, _aviso_enlace(reporte)
+
+        fraude = etiqueta == "fraudulento"
+        if enlace == "peligroso" or (fraude and reporte.total and not reporte.solo_confiables):
+            accion = "BLOQUEAR_ENLACES"
+        elif fraude or nivel in ("medio", "desconocido") or codigos & CODIGOS_ENLACE_RIESGO:
+            accion = "ADVERTIR"
+        else:
+            accion = "PERMITIR"
+        categoria = categoria_heuristica(texto, codigos) if (fraude or nivel == "medio") else "CONVERSACION_GENUINA"
+        if prediccion is None:
+            categoria = categoria_heuristica(texto, codigos) if codigos else "CONVERSACION_GENUINA"
+        return DecisionTactica(accion, categoria, None, motor, etiqueta, nivel, incierto, aviso)
 
     # ------------------------------------------------------------------ cascada
 
@@ -309,66 +461,52 @@ class DecisionEngine:
         """Evaluación completa. Lanza ModelUnavailable si el Nivel 1 no está disponible."""
         prediccion = self.predictor.classify(texto)
         senales = detect_signals(texto)
+        reporte = analizar_enlaces(texto)
 
         if self.es_fast_path(prediccion, senales):
-            decision = DecisionTactica("PERMITIR", "CONVERSACION_GENUINA", None, "fast_path")
+            decision = self.politica_respaldo(texto, prediccion, senales, reporte, motor="fast_path")
             return Evaluacion(prediccion, senales, decision)
 
-        respaldo = self.decision_heuristica(texto, prediccion, senales)
-        decision = respaldo
+        decision = self.politica_respaldo(texto, prediccion, senales, reporte)
         try:
             backend = self._backend_disponible()
             if backend is not None:
-                bancario, suplantacion = self._contexto(texto)
-                caracteristicas = {
+                salida = self._invocar_backend(backend, {
                     "texto": clean_chat_elongation(texto),
-                    "probabilidad_lexica": prediccion.puntuacion,
-                    "etiqueta_nivel1": prediccion.etiqueta,
-                    "incertidumbre_nivel1": prediccion.incertidumbre,
+                    "probabilidad_lexica": prediccion.puntuacion if prediccion.puntuacion is not None else 0.5,
                     "senales": sorted(s.codigo for s in senales),
-                    "contexto_bancario": bancario,
-                    "patron_suplantacion": suplantacion,
                     "remitente": remitente,
                     "destinatario": destinatario,
-                }
-                laya = self._invocar_backend(backend, caracteristicas)
-                if laya is not None:
-                    decision = self._armonizar(laya, respaldo, prediccion, senales)
+                })
+                if salida is not None:
+                    decision = self.politica_laya(texto, salida[0], salida[1], prediccion, senales, reporte)
         except Exception:
-            decision = respaldo
+            pass  # se conserva la decisión de respaldo
         return Evaluacion(prediccion, senales, decision)
 
     def evaluar_mensaje(self, texto: str, remitente: str | None = None, destinatario: str | None = None) -> dict[str, Any]:
         """Payload de seguridad para el chat. Nunca lanza excepciones."""
         try:
             evaluacion = self.evaluar(texto, remitente, destinatario)
-        except ModelUnavailable:
-            return self._payload_sin_modelo(texto)
         except Exception:
             return self._payload_sin_modelo(texto)
-
         prediccion, senales, decision = evaluacion.prediccion, evaluacion.senales, evaluacion.decision
-        # Misma lógica de nivel que la versión anterior del chat (compatibilidad).
-        if prediccion.etiqueta == "fraudulento":
-            nivel = "alto" if senales else ("medio" if prediccion.incertidumbre else "alto")
-        else:
-            nivel = "medio" if prediccion.incertidumbre else "bajo"
-        incierto = prediccion.incertidumbre and not senales
         return {
-            "etiqueta_modelo": prediccion.etiqueta,
-            "nivel": nivel,
-            "incertidumbre": incierto,
-            "aviso_incertidumbre": "Resultado incierto: la puntuación está en la zona intermedia." if incierto else None,
+            "etiqueta_modelo": decision.etiqueta,
+            "nivel": decision.nivel,
+            "incertidumbre": decision.incierto,
+            "aviso_incertidumbre": decision.aviso,
             "senales": [{"codigo": s.codigo, "titulo": s.titulo, "descripcion": s.descripcion} for s in senales],
-            "recomendaciones": recommendations(nivel, senales),
+            "recomendaciones": recommendations(decision.nivel, senales),
             "datos_demostrativos": self.predictor.metadata.get("datos_demostrativos", False),
+            "etiqueta_nivel1": prediccion.etiqueta,
             **self.campos_decision(decision),
         }
 
     def _payload_sin_modelo(self, texto: str) -> dict[str, Any]:
         try:
             senales = detect_signals(texto)
-            decision = self.decision_heuristica(texto, None, senales)
+            decision = self.politica_respaldo(texto, None, senales, analizar_enlaces(texto), "heuristico_sin_modelo")
         except Exception:
             decision = DecisionTactica("ADVERTIR", "CONVERSACION_GENUINA", None, "heuristico_sin_modelo")
         return {
@@ -379,6 +517,7 @@ class DecisionEngine:
             "senales": [],
             "recomendaciones": ["El modelo no está disponible. Sé precavido con este mensaje."],
             "datos_demostrativos": False,
+            "etiqueta_nivel1": "desconocido",
             **self.campos_decision(decision),
         }
 

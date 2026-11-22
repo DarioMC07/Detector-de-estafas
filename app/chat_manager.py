@@ -33,6 +33,8 @@ class ChatMessage:
     categoria_fraude: str = "CONVERSACION_GENUINA"
     confianza_calibrada: float | None = None
     motor_decision: str = "fast_path"
+    # Clase que eligió el Nivel 1 (informativo; el veredicto final es etiqueta_modelo)
+    etiqueta_nivel1: str = "legitimo"
     # Identificador provisional que asigna la app al enviar (para evitar duplicados al reconectar)
     client_id: str | None = None
 

@@ -9,6 +9,8 @@ class AnalyzeResult {
   final List<SignalItem> senales;
   final List<String> recomendaciones;
   final bool datosDemostrativos;
+  final String accionTactica;
+  final String categoriaFraude;
 
   AnalyzeResult({
     required this.categoria,
@@ -19,6 +21,8 @@ class AnalyzeResult {
     required this.senales,
     required this.recomendaciones,
     required this.datosDemostrativos,
+    this.accionTactica = 'PERMITIR',
+    this.categoriaFraude = 'CONVERSACION_GENUINA',
   });
 
   factory AnalyzeResult.fromJson(Map<String, dynamic> json) {
@@ -36,6 +40,8 @@ class AnalyzeResult {
           .toList(),
       recomendaciones: rawRecs.map((r) => r.toString()).toList(),
       datosDemostrativos: json['datos_demostrativos'] ?? false,
+      accionTactica: (json['accion_tactica'] ?? 'PERMITIR').toString(),
+      categoriaFraude: (json['categoria_fraude'] ?? 'CONVERSACION_GENUINA').toString(),
     );
   }
 }

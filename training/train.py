@@ -20,6 +20,8 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold, train_test_sp
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
+from app.text_features import preprocesar_para_modelo
+
 ROOT = Path(__file__).resolve().parents[1]
 DEMO_DATA = ROOT / "data" / "mensajes_demo.csv"
 LABELS = ["legitimo", "fraudulento"]
@@ -40,9 +42,21 @@ SPANISH_STOPWORDS = [
 ]
 
 
+CATEGORIES = ("CONVERSACION_GENUINA", "PHISHING_BANCARIO", "SUPLANTACION_IDENTIDAD", "PREMIO_FALSO", "OTRO_FRAUDE")
+
+
 def load_dataset(path: Path):
     """Conservar el texto; normalizar espacios y mayúsculas para detectar duplicados."""
-    texts, labels, seen = [], [], {}
+    texts, labels, _, report = load_dataset_with_categories(path)
+    return texts, labels, report
+
+
+def load_dataset_with_categories(path: Path):
+    """Como load_dataset, pero también devuelve la columna opcional ``categoria``.
+
+    Si falta la columna o una celda, la categoría queda en None (el entrenamiento de
+    Laya la infiere con reglas)."""
+    texts, labels, categories, seen = [], [], [], {}
     removed_empty = removed_duplicates = 0
     with path.open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
@@ -67,21 +81,27 @@ def load_dataset(path: Path):
             seen[key] = label
             texts.append(text)
             labels.append(label)
+            category = (row.get("categoria") or "").strip().upper() or None
+            if category is not None and category not in CATEGORIES:
+                raise ValueError(f"Categoría inválida en la fila {line}: {category!r}.")
+            if category is not None and (category == "CONVERSACION_GENUINA") != (label == "legitimo"):
+                raise ValueError(f"Categoría incoherente con la etiqueta en la fila {line}.")
+            categories.append(category)
     counts = Counter(labels)
     if set(counts) != set(LABELS):
         raise ValueError("Se necesitan ejemplos de ambas clases: legitimo y fraudulento.")
     if min(counts.values()) < 5:
         raise ValueError("Datos insuficientes: se requieren al menos 5 textos distintos por clase para separar y validar.")
-    return texts, labels, {
+    return texts, labels, categories, {
         "registros_utilizados": len(texts), "vacios_eliminados": removed_empty,
         "duplicados_eliminados": removed_duplicates, "clases": dict(counts),
     }
 
 
-def train(data_path: Path, output_dir: Path, demo: bool = False):
-    texts, labels, cleaning = load_dataset(data_path)
-    x_train, x_test, y_train, y_test = train_test_split(
-        texts, labels, test_size=0.25, stratify=labels, random_state=SEED,
+def train(data_path: Path, output_dir: Path, demo: bool = False, train_level2: bool = True):
+    texts, labels, categories, cleaning = load_dataset_with_categories(data_path)
+    x_train, x_test, y_train, y_test, c_train, c_test = train_test_split(
+        texts, labels, categories, test_size=0.25, stratify=labels, random_state=SEED,
     )
     folds = min(5, min(Counter(y_train).values()))
     if folds < 2 or set(y_test) != set(LABELS):
@@ -104,11 +124,12 @@ def train(data_path: Path, output_dir: Path, demo: bool = False):
     pipelines, comparison = {}, {}
     cv = StratifiedKFold(n_splits=folds, shuffle=True, random_state=SEED)
     for name, classifier in candidates.items():
-        # El patrón conserva palabras, signos y elementos de enlaces como tokens.
+        # El preprocesador (guardado dentro del pipeline) sustituye enlaces por tokens de
+        # riesgo, quita tildes y colapsa alargamientos; el patrón conserva palabras y signos.
         pipeline = Pipeline([
             ("tfidf", TfidfVectorizer(
-                lowercase=True, ngram_range=(1, 2),
-                token_pattern=r"(?u)\b\w+\b|[^\w\s]",
+                preprocessor=preprocesar_para_modelo, ngram_range=(1, 2),
+                token_pattern=r"(?u)\b\w+\b|[^\w\s]", sublinear_tf=True,
             )),
             ("classifier", classifier),
         ])
@@ -159,6 +180,13 @@ def train(data_path: Path, output_dir: Path, demo: bool = False):
         "Las métricas dependen de la representatividad del dataset; no garantizan eficacia en otros mensajes.",
     }
     output_dir.mkdir(parents=True, exist_ok=True)
+    if train_level2:
+        # Nivel 2 (Laya): mismo split; usa puntuaciones del Nivel 1 fuera de muestra.
+        from training.train_laya import train_laya
+        metadata["nivel2"] = train_laya(
+            x_train, y_train, c_train, x_test, y_test, c_test,
+            l1_template=model, l1_final=model, folds=folds, output_dir=output_dir,
+        )
     joblib.dump({"pipeline": model, "metadata": metadata}, output_dir / "modelo.joblib")
     (output_dir / "metricas.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
     return metadata

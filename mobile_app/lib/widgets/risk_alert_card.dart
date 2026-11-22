@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/chat_message.dart';
 import '../theme.dart';
+import '../utils/fraud_labels.dart';
 
 /// Resultado del detector para un mensaje recibido.
 ///
@@ -40,14 +41,22 @@ class _RiskAlertCardState extends State<RiskAlertCard> {
     }
 
     final isFraud = m.isFraud;
-    final isUncertain = m.incertidumbre;
+    // Un enlace http/sospechoso sin otros indicios se muestra como precaución, no como "incierto".
+    final isLinkWarning = !isFraud && m.hasRiskyLink;
+    final isUncertain = m.incertidumbre || isLinkWarning;
     final Color bg = isFraud ? AppColors.dangerBg : (isUncertain ? AppColors.warningBg : AppColors.safeBg);
     final Color border = isFraud ? AppColors.dangerBorder : (isUncertain ? AppColors.warningBorder : AppColors.safeBorder);
     final Color fg = isFraud ? const Color(0xFFFFB4B4) : (isUncertain ? AppColors.warning : AppColors.safe);
-    final IconData icon = isFraud ? Icons.gpp_maybe : (isUncertain ? Icons.warning_amber_rounded : Icons.verified_user_outlined);
+    final IconData icon = isFraud
+        ? Icons.gpp_maybe
+        : (isLinkWarning ? Icons.link_off : (isUncertain ? Icons.warning_amber_rounded : Icons.verified_user_outlined));
+    final category = categoriaLabel(m.categoriaFraude);
     final String title = isFraud
-        ? 'Posible estafa'
-        : (isUncertain ? 'Resultado incierto' : 'Parece legítimo, con señales a revisar');
+        ? (category.isNotEmpty ? 'Posible estafa: $category' : 'Posible estafa')
+        : (isLinkWarning
+            ? 'Precaución: enlace no seguro'
+            : (isUncertain ? 'Resultado incierto' : 'Parece legítimo, con señales a revisar'));
+    final action = (isFraud || isUncertain) ? accionLabel(m.accionTactica) : null;
     final hasDetails = m.senales.isNotEmpty || m.recomendaciones.isNotEmpty || m.avisoIncertidumbre != null;
 
     return Container(
@@ -81,6 +90,20 @@ class _RiskAlertCardState extends State<RiskAlertCard> {
                       Icon(_expanded ? Icons.expand_less : Icons.expand_more, size: 18, color: fg),
                   ],
                 ),
+                if (action != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Row(
+                      children: [
+                        Icon(m.linksBlocked ? Icons.block : Icons.pan_tool_alt_outlined, size: 14, color: fg),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(action,
+                              style: TextStyle(color: fg, fontSize: 12, fontWeight: FontWeight.w600)),
+                        ),
+                      ],
+                    ),
+                  ),
                 if (!_expanded && m.senales.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
@@ -95,7 +118,7 @@ class _RiskAlertCardState extends State<RiskAlertCard> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  _shortSignal(s.codigo, s.titulo),
+                                  shortSignalLabel(s.codigo, s.titulo),
                                   style: TextStyle(color: fg, fontSize: 11),
                                 ),
                               ))
@@ -135,17 +158,6 @@ class _RiskAlertCardState extends State<RiskAlertCard> {
         ),
       ),
     );
-  }
-
-  String _shortSignal(String code, String title) {
-    const names = {
-      'urgencia': 'Urgencia',
-      'credenciales': 'Pide claves',
-      'enlace': 'Enlace',
-      'dinero': 'Dinero',
-      'premio': 'Premio',
-    };
-    return names[code] ?? (title.isNotEmpty ? title : code);
   }
 }
 

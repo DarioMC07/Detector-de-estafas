@@ -33,7 +33,7 @@ def get_decision_engine(state) -> DecisionEngine:
     engine = getattr(state, "decision_engine", None)
     if engine is None or engine.predictor is not state.predictor:
         engine = DecisionEngine(state.predictor)
-        engine.iniciar()
+        engine.iniciar(espera=5.0)
         state.decision_engine = engine
     return engine
 
@@ -51,7 +51,7 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
         # Nivel 2: el backend (Laya) se carga en segundo plano; mientras tanto, o si no
         # está instalado, el motor usa el árbitro heurístico local.
         engine = DecisionEngine(application.state.predictor)
-        engine.iniciar()
+        engine.iniciar(espera=5.0)  # laya.joblib carga en milisegundos; no bloquea si tarda
         application.state.decision_engine = engine
         try:
             yield
@@ -111,29 +111,41 @@ def create_app(model_path: Path | None = None, low: float | None = None, high: f
         engine = get_decision_engine(request.app.state)
         # Lanza ModelUnavailable (503) igual que antes si no hay modelo.
         evaluation = engine.evaluar(payload.texto)
-        prediction, signals = evaluation.prediccion, evaluation.senales
-        label = prediction.etiqueta
+        prediction, signals, decision = evaluation.prediccion, evaluation.senales, evaluation.decision
+        # Veredicto final de la cascada (Laya si está disponible; si no, Nivel 1 + reglas de enlaces).
+        label = decision.etiqueta
         category = "Legítimo según el modelo" if label == "legitimo" else "Fraudulento según el modelo"
         level = "bajo" if label == "legitimo" else "alto"
         explanations = {
-            "legitimo": "El clasificador ha elegido la clase legítimo. Es una predicción del modelo, no una verificación de autenticidad ni una garantía de seguridad.",
-            "fraudulento": "El clasificador ha elegido la clase fraudulento. Es una predicción del modelo, no una confirmación de fraude. Comprueba la solicitud por otra vía antes de actuar.",
+            "legitimo": "El sistema ha clasificado el mensaje como legítimo. Es una predicción, no una verificación de autenticidad ni una garantía de seguridad.",
+            "fraudulento": "El sistema ha clasificado el mensaje como fraudulento. Es una predicción, no una confirmación de fraude. Comprueba la solicitud por otra vía antes de actuar.",
         }
-        explanation = explanations[label] + " La puntuación interna no es una probabilidad real de estafa."
-        uncertainty_notice = (
-            "Resultado incierto: la puntuación está en la zona intermedia de los umbrales provisionales. "
-            "La clase indicada sigue siendo la predicción binaria; no la tomes como concluyente y revisa el mensaje con ayuda."
-            if prediction.incertidumbre else None
-        )
+        explanation = explanations[label]
+        if decision.motor == "laya":
+            explanation += (" Decisión del motor Laya: combina el clasificador de texto, las señales y el análisis de "
+                            "enlaces en una probabilidad calibrada con datos demostrativos.")
+        else:
+            explanation += " La puntuación interna no es una probabilidad real de estafa."
+        # Sin Laya se conserva la semántica anterior de incertidumbre (zona intermedia del Nivel 1).
+        uncertain = decision.nivel == "medio" or (decision.motor != "laya" and prediction.incertidumbre)
+        if decision.nivel == "medio" and decision.aviso:
+            uncertainty_notice = decision.aviso
+        elif uncertain:
+            uncertainty_notice = (
+                "Resultado incierto: la puntuación está en la zona intermedia de los umbrales provisionales. "
+                "La clase indicada sigue siendo la predicción binaria; no la tomes como concluyente y revisa el mensaje con ayuda."
+            )
+        else:
+            uncertainty_notice = None
         if signals:
-            explanation += " Las señales siguientes se detectan mediante reglas independientes y no determinan la categoría del modelo."
+            explanation += " Las señales siguientes se detectan mediante reglas independientes."
         else:
             explanation += " Las reglas no encontraron las señales previstas; esto tampoco descarta un fraude."
         return AnalyzeResponse(
             categoria=category, nivel=level, senales=signals, explicacion=explanation,
-            etiqueta_modelo=label, incertidumbre=prediction.incertidumbre,
+            etiqueta_modelo=label, incertidumbre=uncertain,
             aviso_incertidumbre=uncertainty_notice,
-            recomendaciones=recommendations("medio" if prediction.incertidumbre else level, signals),
+            recomendaciones=recommendations("medio" if uncertain else level, signals),
             datos_demostrativos=predictor.metadata["datos_demostrativos"],
             **DecisionEngine.campos_decision(evaluation.decision),
         )

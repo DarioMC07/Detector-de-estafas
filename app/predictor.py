@@ -36,6 +36,7 @@ class Predictor:
         if not (math.isfinite(low) and math.isfinite(high) and 0 < low < high < 1):
             raise ValueError("Los umbrales deben cumplir 0 < UMBRAL_BAJO < UMBRAL_ALTO < 1.")
         self.low, self.high = low, high
+        self.path = Path(path)
         self.pipeline = None
         self.metadata = {}
         # Solo cargar artefactos propios: joblib puede ejecutar código al deserializar.

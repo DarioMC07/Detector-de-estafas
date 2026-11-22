@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../models/analyze_result.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
+import '../utils/fraud_labels.dart';
 
 class ManualAnalyzerScreen extends StatefulWidget {
   const ManualAnalyzerScreen({super.key});
@@ -174,7 +175,17 @@ class _ManualAnalyzerScreenState extends State<ManualAnalyzerScreen> {
                 Icon(icon, color: fg, size: 28),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(r.categoria, style: TextStyle(color: fg, fontWeight: FontWeight.bold, fontSize: 17)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(r.categoria, style: TextStyle(color: fg, fontWeight: FontWeight.bold, fontSize: 17)),
+                      if (isFraud && categoriaLabel(r.categoriaFraude).isNotEmpty)
+                        Text(categoriaLabel(r.categoriaFraude), style: TextStyle(color: fg, fontSize: 13)),
+                      if ((isFraud || isUncertain) && accionLabel(r.accionTactica) != null)
+                        Text(accionLabel(r.accionTactica)!,
+                            style: TextStyle(color: fg, fontSize: 12, fontWeight: FontWeight.w600)),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -1,3 +1,4 @@
+import '../utils/fraud_labels.dart';
 import 'signal_item.dart';
 
 /// Estado de envío de un mensaje propio.
@@ -21,6 +22,10 @@ class ChatMessage {
   final List<SignalItem> senales;
   final List<String> recomendaciones;
 
+  // Decisión táctica del motor Laya (Nivel 2)
+  final String accionTactica; // 'PERMITIR', 'ADVERTIR', 'BLOQUEAR_ENLACES'
+  final String categoriaFraude; // 'CONVERSACION_GENUINA', 'PHISHING_BANCARIO', ...
+
   ChatMessage({
     required this.id,
     this.clientId,
@@ -35,8 +40,12 @@ class ChatMessage {
     this.avisoIncertidumbre,
     this.senales = const [],
     this.recomendaciones = const [],
+    this.accionTactica = 'PERMITIR',
+    this.categoriaFraude = 'CONVERSACION_GENUINA',
   });
 
+  bool get linksBlocked => accionTactica == 'BLOQUEAR_ENLACES';
+  bool get hasRiskyLink => senales.any((s) => riskyLinkSignals.contains(s.codigo));
   bool get isFraud => etiquetaModelo == 'fraudulento';
   bool get isUnknown => etiquetaModelo == 'desconocido';
   bool get isSafe => etiquetaModelo == 'legitimo' && !incertidumbre;
@@ -83,6 +92,8 @@ class ChatMessage {
           .map((s) => SignalItem.fromJson(Map<String, dynamic>.from(s as Map)))
           .toList(),
       recomendaciones: rawRecs.map((r) => r.toString()).toList(),
+      accionTactica: (json['accion_tactica'] ?? 'PERMITIR').toString(),
+      categoriaFraude: (json['categoria_fraude'] ?? 'CONVERSACION_GENUINA').toString(),
     );
   }
 
@@ -100,5 +111,7 @@ class ChatMessage {
         avisoIncertidumbre: avisoIncertidumbre,
         senales: senales,
         recomendaciones: recomendaciones,
+        accionTactica: accionTactica,
+        categoriaFraude: categoriaFraude,
       );
 }

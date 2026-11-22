@@ -1,159 +1,416 @@
-texto,etiqueta
-"Hola mamá, llego a casa a las seis. Te llamo cuando salga.",legitimo
-"Tu cita en el centro de salud es el martes a las 10:30. Si necesitas cambios llama al teléfono habitual.",legitimo
-"La biblioteca informa de que el libro reservado ya está disponible para recoger.",legitimo
-"Mañana tenemos reunión de vecinos a las siete en el portal.",legitimo
-"El pedido está listo para recoger en nuestra tienda. Trae tu recibo.",legitimo
-"Te envío las fotos de las vacaciones cuando tenga un momento.",legitimo
-"Recuerda llevar la tarjeta sanitaria a la consulta del jueves.",legitimo
-"El taller ha terminado la revisión del coche. Puedes pasar esta tarde.",legitimo
-"La clase de informática empieza el lunes en el centro cultural.",legitimo
-"Ya he comprado el pan y la fruta. Nos vemos para comer.",legitimo
-"El recibo de la comunidad está disponible en la oficina del administrador.",legitimo
-"La oficina permanecerá cerrada durante el festivo local.",legitimo
-"Consulta los horarios de la biblioteca en https://biblioteca.example.org/horarios.",legitimo
-"El curso gratuito de lectura tiene plazas disponibles. Información en el centro municipal.",legitimo
-"¡Feliz cumpleaños! Espero que pases un día estupendo con la familia.",legitimo
-"No compartas tu contraseña con nadie. Nuestro personal nunca te la pedirá por mensaje.",legitimo
-"Hemos recibido tu solicitud de cambio de domicilio. Puedes consultar su estado en la oficina.",legitimo
-"El autobús de la excursión sale a las nueve desde la plaza.",legitimo
-"La farmacia confirma que tu encargo puede recogerse mañana.",legitimo
-"¿Puedes traer el paraguas? Está lloviendo mucho.",legitimo
-"La factura de este mes se cargará mediante la domiciliación acordada.",legitimo
-"Gracias por asistir al taller. El material está en https://formacion.example.org/material.",legitimo
-"El museo abre de martes a domingo. La entrada del domingo es gratuita.",legitimo
-"He cambiado la hora de la comida al sábado a las dos. Avísame si puedes venir.",legitimo
-"Tu turno de atención es el número 24. Espera a que aparezca en la pantalla.",legitimo
-"El equipo de fútbol entrena hoy en el campo de siempre.",legitimo
-"La asociación confirma la recepción de tu inscripción al paseo del barrio.",legitimo
-"Por favor revisa el borrador del trabajo antes de nuestra reunión del viernes.",legitimo
-"Tenemos que llamar al fontanero esta semana para revisar el grifo.",legitimo
-"La transferencia que acordamos está anotada en el presupuesto. La revisamos juntos en persona.",legitimo
-"Puedes leer el programa de fiestas en www.ayuntamiento.example.org.",legitimo
-"La reparación está incluida en la garantía; no debes realizar ningún pago adicional.",legitimo
-"¡Gracias por tu ayuda con la mudanza! Te invito a cenar el viernes.",legitimo
-"Si has olvidado la contraseña entra en la aplicación que usas habitualmente y sigue la ayuda.",legitimo
-"El centro de mayores organiza una charla sobre prevención de estafas el miércoles.",legitimo
-"El concurso de dibujo del colegio termina mañana. Los trabajos se entregan en clase.",legitimo
-"La revisión dental será en la consulta de siempre a las doce.",legitimo
-"Necesito confirmar cuántos venís a cenar para hacer la compra.",legitimo
-"El paquete se encuentra en recepción. Puedes recogerlo con tu identificación.",legitimo
-"La entrega de premios de la carrera será el domingo en el polideportivo.",legitimo
-"URGENTE: tu cuenta será bloqueada en una hora. Envía tu contraseña para evitarlo.",fraudulento
-"Has ganado 5000 euros sin participar. Paga una tasa de 50 euros para recibir tu premio.",fraudulento
-"Somos el banco. Confirma tu clave y el código SMS ahora mismo o perderás el acceso.",fraudulento
-"Tu paquete está retenido. Paga inmediatamente en https://entrega-verificar.example.com/pago.",fraudulento
-"Hola mamá soy tu hijo, este es mi nuevo número. Haz una transferencia urgente de 900 euros.",fraudulento
-"Último aviso: multa pendiente. Abona hoy en http://multa-rapida.example.net o serás detenido.",fraudulento
-"Tu tarjeta ha sido suspendida. Introduce el PIN en www.validar-tarjeta.example.com.",fraudulento
-"Inversión garantizada: duplica tu dinero en 24 horas. Transfiere tus ahorros ahora.",fraudulento
-"Felicidades, eres el ganador de un teléfono gratis. Envía tus datos bancarios y paga el envío.",fraudulento
-"Departamento de seguridad: responde con el código de verificación que acabas de recibir.",fraudulento
-"Solo tienes diez minutos para reclamar tu herencia. Ingresa 200 euros para desbloquearla.",fraudulento
-"Detectamos un cargo. Para anularlo comparte tu contraseña de banca y tu código SMS.",fraudulento
-"Oferta exclusiva de empleo: gana 300 euros al día. Primero debes pagar la matrícula por transferencia.",fraudulento
-"Tu devolución de impuestos caduca hoy. Escribe tu tarjeta completa en https://reembolso.example.net.",fraudulento
-"¡PREMIO ASEGURADO! Has sido seleccionado. Compra tarjetas regalo y envíanos sus códigos.",fraudulento
-"Soy el director, no puedo hablar. Necesito que transfieras dinero a esta cuenta ahora mismo.",fraudulento
-"Actualiza tu correo o borraremos todos tus archivos. Responde con usuario y contraseña.",fraudulento
-"Tenemos un vídeo tuyo. Paga en criptomonedas hoy o lo enviaremos a todos tus contactos.",fraudulento
-"Tu pensión será cancelada. Verifica tus claves urgentemente en https://pension-segura.example.com.",fraudulento
-"Recibe un bono de supermercado de 1000 euros. Paga 3 euros para activar el regalo.",fraudulento
-"El banco necesita tu PIN y contraseña para una revisión inmediata. No llames a tu oficina.",fraudulento
-"Te han concedido un préstamo sin requisitos. Deposita una comisión antes de recibirlo.",fraudulento
-"Tu familiar está detenido. Envía dinero inmediatamente y no lo consultes con nadie.",fraudulento
-"Ganaste la lotería internacional. Para cobrar debes transferir primero los impuestos a nuestra cuenta.",fraudulento
-"Alerta de acceso ilegal. Instala el archivo adjunto y facilita tus claves al técnico.",fraudulento
-"Necesitamos el número de tu tarjeta y el código de seguridad para liberar tu paquete.",fraudulento
-"Aprovecha esta inversión sin riesgo. Beneficio del 40 por ciento semanal si pagas hoy.",fraudulento
-"Tu servicio eléctrico se cortará en treinta minutos. Paga por este enlace https://cobro.example.org.",fraudulento
-"Has recibido una donación millonaria. Envía una comisión de gestión para desbloquear el dinero.",fraudulento
-"Soy tu nieta, perdí el móvil. No llames y hazme un Bizum urgente a este nuevo número.",fraudulento
-"Valida tu identidad enviando una foto de tu tarjeta por ambos lados y tu contraseña.",fraudulento
-"Última oportunidad para recuperar tu cuenta. Comparte el código de acceso en este chat.",fraudulento
-"Reembolso aprobado: paga una tarifa de activación mediante transferencia para cobrarlo.",fraudulento
-"Un comprador ya pagó tu producto. Abre https://cobrar-venta.example.net e introduce tu clave bancaria.",fraudulento
-"Tu antivirus ha caducado. Llama ahora y permite el acceso remoto para evitar perder tus fotos.",fraudulento
-"Hemos cambiado la cuenta del proveedor. Paga la factura hoy sin comprobarlo por teléfono.",fraudulento
-"Tu cuenta está en peligro. Retira tus ahorros y transfiérelos a nuestra cuenta de seguridad.",fraudulento
-"Regalo exclusivo para jubilados. Para reservarlo necesitamos tu tarjeta y un pago inmediato.",fraudulento
-"No le digas a nadie: necesito dinero para salir del hospital. Envíalo ahora a este número.",fraudulento
-"Tu premio está esperando. Entra en www.premio-inmediato.example.com y paga antes de medianoche.",fraudulento
-"Te ganaste 5000 BS! entra a este enlace para reclamar el premio https://cobrartupremio.com",fraudulento
-"HOLA MAMI SOY TU HIJO, ROBARON MI CELULAR, MANDAME PLATA A ESTE NUEVO NUMERO PARA PODER COMUNICARME CON VOS.",fraudulento
-
-"Hola",legitimo
-"Hola, ¿cómo estás?",legitimo
-"Holaa, qué tal?",legitimo
-"Hola buenas, ¿cómo te va?",legitimo
-"Buenos días a todos",legitimo
-"Buenas tardes, ¿todo bien?",legitimo
-"Buenas noches, que descanses",legitimo
-"¿Qué onda amigo? ¿Cómo estás?",legitimo
-"Hola mami, ¿cómo estás? Te llamo más tarde",legitimo
-"Hola papá, ya llegué a la universidad",legitimo
-"Dale, me parece perfecto",legitimo
-"Listo, nos vemos a las tres",legitimo
-"Ok, ya salí de la oficina, voy para allá",legitimo
-"Estoy en camino, llego en 10 minutos",legitimo
-"Avísame cuando llegues a casa",legitimo
-"Muchas gracias por tu ayuda de hoy",legitimo
-"¿A qué hora nos encontramos para comer?",legitimo
-"¿Vamos a almorzar juntos?",legitimo
-"Te llamo en un rato, estoy en una reunión",legitimo
-"Hablamos más tarde, cuídate mucho",legitimo
-"Perfecto, nos vemos mañana",legitimo
-"Claro que sí, cuenta conmigo",legitimo
-"Un abrazo grande, saludos a la familia",legitimo
-"¿Viste el partido de ayer? Estuvo muy bueno",legitimo
-"Buen viaje, que te vaya muy bien",legitimo
-"¿Me pasas las fotos del fin de semana por favor?",legitimo
-"Te comparto el documento para que lo revises con calma",legitimo
-"Aviso urgente Banco: Tu cuenta ha sido bloqueada preventivamente. Desbloquea en https://banco-desbloqueo.net",fraudulento
-"Felicidades, tu número ha sido seleccionado para ganar 10.000 Bs. Reclama tu premio aquí: https://premio-sorteo.com",fraudulento
-"Tía se me arruinó el celular, estoy varado en la terminal, ¿puedes prestarme dinero por QR urgente?",fraudulento
-"Servicio de Impuestos: Tienes una deuda pendiente con orden de embargo. Paga de inmediato en https://pago-multas.online",fraudulento
-"Tu paquete no pudo ser entregado por falta de dirección. Paga los costos de reenvío en https://rastreo-paqueteria.com",fraudulento
-
-"Hola",legitimo
-"Hola, ¿cómo estás?",legitimo
-"Holaa, qué tal?",legitimo
-"Hola buenas, ¿cómo te va?",legitimo
-"Buenos días a todos",legitimo
-"Buenas tardes, ¿todo bien?",legitimo
-"Buenas noches, que descanses",legitimo
-"¿Qué onda amigo? ¿Cómo estás?",legitimo
-"Hola mami, ¿cómo estás? Te llamo más tarde",legitimo
-"Hola papá, ya llegué a la universidad",legitimo
-"Dale, me parece perfecto",legitimo
-"Listo, nos vemos a las tres",legitimo
-"Ok, ya salí de la oficina, voy para allá",legitimo
-"Estoy en camino, llego en 10 minutos",legitimo
-"Avísame cuando llegues a casa",legitimo
-"Muchas gracias por tu ayuda de hoy",legitimo
-"¿A qué hora nos encontramos para comer?",legitimo
-"¿Vamos a almorzar juntos?",legitimo
-"Te llamo en un rato, estoy en una reunión",legitimo
-"Hablamos más tarde, cuídate mucho",legitimo
-"Perfecto, nos vemos mañana",legitimo
-"Claro que sí, cuenta conmigo",legitimo
-"Un abrazo grande, saludos a la familia",legitimo
-"¿Viste el partido de ayer? Estuvo muy bueno",legitimo
-"Buen viaje, que te vaya muy bien",legitimo
-"¿Me pasas las fotos del fin de semana por favor?",legitimo
-"Te comparto el documento para que lo revises con calma",legitimo
-"Aviso urgente Banco: Tu cuenta ha sido bloqueada preventivamente. Desbloquea en https://banco-desbloqueo.net",fraudulento
-"Felicidades, tu número ha sido seleccionado para ganar 10.000 Bs. Reclama tu premio aquí: https://premio-sorteo.com",fraudulento
-"Tía se me arruinó el celular, estoy varado en la terminal, ¿puedes prestarme dinero por QR urgente?",fraudulento
-"Servicio de Impuestos: Tienes una deuda pendiente con orden de embargo. Paga de inmediato en https://pago-multas.online",fraudulento
-"Tu paquete no pudo ser entregado por falta de dirección. Paga los costos de reenvío en https://rastreo-paqueteria.com",fraudulento
-"Bien y tu?",legitimo
-"Bien, ¿y tú?",legitimo
-"Todo bien y tu?",legitimo
-"Muy bien gracias, ¿y tú qué tal?",legitimo
-"Aquí tranquilo, ¿y tú?",legitimo
-"Bien bien, ¿tú cómo andas?",legitimo
-"Sí, nos vemos luego",legitimo
-"Dale, gracias",legitimo
-"Jaja sí, tal cual",legitimo
-"Ya llegué, ¿tú dónde estás?",legitimo
+texto,etiqueta,categoria
+"Hola mamá, llego a casa a las seis. Te llamo cuando salga.",legitimo,CONVERSACION_GENUINA
+"Tu cita en el centro de salud es el martes a las 10:30. Si necesitas cambios llama al teléfono habitual.",legitimo,CONVERSACION_GENUINA
+"La biblioteca informa de que el libro reservado ya está disponible para recoger.",legitimo,CONVERSACION_GENUINA
+"Mañana tenemos reunión de vecinos a las siete en el portal.",legitimo,CONVERSACION_GENUINA
+"El pedido está listo para recoger en nuestra tienda. Trae tu recibo.",legitimo,CONVERSACION_GENUINA
+"Te envío las fotos de las vacaciones cuando tenga un momento.",legitimo,CONVERSACION_GENUINA
+"Recuerda llevar la tarjeta sanitaria a la consulta del jueves.",legitimo,CONVERSACION_GENUINA
+"El taller ha terminado la revisión del coche. Puedes pasar esta tarde.",legitimo,CONVERSACION_GENUINA
+"La clase de informática empieza el lunes en el centro cultural.",legitimo,CONVERSACION_GENUINA
+"Ya he comprado el pan y la fruta. Nos vemos para comer.",legitimo,CONVERSACION_GENUINA
+"El recibo de la comunidad está disponible en la oficina del administrador.",legitimo,CONVERSACION_GENUINA
+"La oficina permanecerá cerrada durante el festivo local.",legitimo,CONVERSACION_GENUINA
+"Consulta los horarios de la biblioteca en https://biblioteca.example.org/horarios.",legitimo,CONVERSACION_GENUINA
+"El curso gratuito de lectura tiene plazas disponibles. Información en el centro municipal.",legitimo,CONVERSACION_GENUINA
+"¡Feliz cumpleaños! Espero que pases un día estupendo con la familia.",legitimo,CONVERSACION_GENUINA
+"No compartas tu contraseña con nadie. Nuestro personal nunca te la pedirá por mensaje.",legitimo,CONVERSACION_GENUINA
+"Hemos recibido tu solicitud de cambio de domicilio. Puedes consultar su estado en la oficina.",legitimo,CONVERSACION_GENUINA
+"El autobús de la excursión sale a las nueve desde la plaza.",legitimo,CONVERSACION_GENUINA
+"La farmacia confirma que tu encargo puede recogerse mañana.",legitimo,CONVERSACION_GENUINA
+"¿Puedes traer el paraguas? Está lloviendo mucho.",legitimo,CONVERSACION_GENUINA
+"La factura de este mes se cargará mediante la domiciliación acordada.",legitimo,CONVERSACION_GENUINA
+"Gracias por asistir al taller. El material está en https://formacion.example.org/material.",legitimo,CONVERSACION_GENUINA
+"El museo abre de martes a domingo. La entrada del domingo es gratuita.",legitimo,CONVERSACION_GENUINA
+"He cambiado la hora de la comida al sábado a las dos. Avísame si puedes venir.",legitimo,CONVERSACION_GENUINA
+"Tu turno de atención es el número 24. Espera a que aparezca en la pantalla.",legitimo,CONVERSACION_GENUINA
+"El equipo de fútbol entrena hoy en el campo de siempre.",legitimo,CONVERSACION_GENUINA
+"La asociación confirma la recepción de tu inscripción al paseo del barrio.",legitimo,CONVERSACION_GENUINA
+"Por favor revisa el borrador del trabajo antes de nuestra reunión del viernes.",legitimo,CONVERSACION_GENUINA
+"Tenemos que llamar al fontanero esta semana para revisar el grifo.",legitimo,CONVERSACION_GENUINA
+"La transferencia que acordamos está anotada en el presupuesto. La revisamos juntos en persona.",legitimo,CONVERSACION_GENUINA
+"Puedes leer el programa de fiestas en www.ayuntamiento.example.org.",legitimo,CONVERSACION_GENUINA
+"La reparación está incluida en la garantía; no debes realizar ningún pago adicional.",legitimo,CONVERSACION_GENUINA
+"¡Gracias por tu ayuda con la mudanza! Te invito a cenar el viernes.",legitimo,CONVERSACION_GENUINA
+"Si has olvidado la contraseña entra en la aplicación que usas habitualmente y sigue la ayuda.",legitimo,CONVERSACION_GENUINA
+"El centro de mayores organiza una charla sobre prevención de estafas el miércoles.",legitimo,CONVERSACION_GENUINA
+"El concurso de dibujo del colegio termina mañana. Los trabajos se entregan en clase.",legitimo,CONVERSACION_GENUINA
+"La revisión dental será en la consulta de siempre a las doce.",legitimo,CONVERSACION_GENUINA
+"Necesito confirmar cuántos venís a cenar para hacer la compra.",legitimo,CONVERSACION_GENUINA
+"El paquete se encuentra en recepción. Puedes recogerlo con tu identificación.",legitimo,CONVERSACION_GENUINA
+"La entrega de premios de la carrera será el domingo en el polideportivo.",legitimo,CONVERSACION_GENUINA
+"Hola",legitimo,CONVERSACION_GENUINA
+"Hola, ¿cómo estás?",legitimo,CONVERSACION_GENUINA
+"Holaa, qué tal?",legitimo,CONVERSACION_GENUINA
+"Hola buenas, ¿cómo te va?",legitimo,CONVERSACION_GENUINA
+"Buenos días a todos",legitimo,CONVERSACION_GENUINA
+"Buenas tardes, ¿todo bien?",legitimo,CONVERSACION_GENUINA
+"Buenas noches, que descanses",legitimo,CONVERSACION_GENUINA
+"¿Qué onda amigo? ¿Cómo estás?",legitimo,CONVERSACION_GENUINA
+"Hola mami, ¿cómo estás? Te llamo más tarde",legitimo,CONVERSACION_GENUINA
+"Hola papá, ya llegué a la universidad",legitimo,CONVERSACION_GENUINA
+"Dale, me parece perfecto",legitimo,CONVERSACION_GENUINA
+"Listo, nos vemos a las tres",legitimo,CONVERSACION_GENUINA
+"Ok, ya salí de la oficina, voy para allá",legitimo,CONVERSACION_GENUINA
+"Estoy en camino, llego en 10 minutos",legitimo,CONVERSACION_GENUINA
+"Avísame cuando llegues a casa",legitimo,CONVERSACION_GENUINA
+"Muchas gracias por tu ayuda de hoy",legitimo,CONVERSACION_GENUINA
+"¿A qué hora nos encontramos para comer?",legitimo,CONVERSACION_GENUINA
+"¿Vamos a almorzar juntos?",legitimo,CONVERSACION_GENUINA
+"Te llamo en un rato, estoy en una reunión",legitimo,CONVERSACION_GENUINA
+"Hablamos más tarde, cuídate mucho",legitimo,CONVERSACION_GENUINA
+"Perfecto, nos vemos mañana",legitimo,CONVERSACION_GENUINA
+"Claro que sí, cuenta conmigo",legitimo,CONVERSACION_GENUINA
+"Un abrazo grande, saludos a la familia",legitimo,CONVERSACION_GENUINA
+"¿Viste el partido de ayer? Estuvo muy bueno",legitimo,CONVERSACION_GENUINA
+"Buen viaje, que te vaya muy bien",legitimo,CONVERSACION_GENUINA
+"¿Me pasas las fotos del fin de semana por favor?",legitimo,CONVERSACION_GENUINA
+"Te comparto el documento para que lo revises con calma",legitimo,CONVERSACION_GENUINA
+"Bien y tu?",legitimo,CONVERSACION_GENUINA
+"Bien, ¿y tú?",legitimo,CONVERSACION_GENUINA
+"Todo bien y tu?",legitimo,CONVERSACION_GENUINA
+"Muy bien gracias, ¿y tú qué tal?",legitimo,CONVERSACION_GENUINA
+"Aquí tranquilo, ¿y tú?",legitimo,CONVERSACION_GENUINA
+"Bien bien, ¿tú cómo andas?",legitimo,CONVERSACION_GENUINA
+"Sí, nos vemos luego",legitimo,CONVERSACION_GENUINA
+"Dale, gracias",legitimo,CONVERSACION_GENUINA
+"Jaja sí, tal cual",legitimo,CONVERSACION_GENUINA
+"Ya llegué, ¿tú dónde estás?",legitimo,CONVERSACION_GENUINA
+"Buenas, ¿cómo amaneciste?",legitimo,CONVERSACION_GENUINA
+"Qué tal tu día?",legitimo,CONVERSACION_GENUINA
+"Todo tranqui por acá, ¿y vos?",legitimo,CONVERSACION_GENUINA
+"Jajaja no puede ser",legitimo,CONVERSACION_GENUINA
+"Jajajaja me muero de risa",legitimo,CONVERSACION_GENUINA
+"Ya pues, nos vemos más rato",legitimo,CONVERSACION_GENUINA
+"Ya, gracias",legitimo,CONVERSACION_GENUINA
+"Okey",legitimo,CONVERSACION_GENUINA
+"Ok dale",legitimo,CONVERSACION_GENUINA
+"Sí claro",legitimo,CONVERSACION_GENUINA
+"No sé, déjame ver",legitimo,CONVERSACION_GENUINA
+"Ahorita te aviso",legitimo,CONVERSACION_GENUINA
+"Espérame cinco minutos que me estoy alistando",legitimo,CONVERSACION_GENUINA
+"Ya estoy saliendo de mi casa",legitimo,CONVERSACION_GENUINA
+"Estoy en el micro, llego como en media hora",legitimo,CONVERSACION_GENUINA
+"Me quedé dormido, perdón, ya voy",legitimo,CONVERSACION_GENUINA
+"¿Dónde estás? Ya llegué a la plaza",legitimo,CONVERSACION_GENUINA
+"Te espero en la puerta del cine",legitimo,CONVERSACION_GENUINA
+"¿Ya comiste?",legitimo,CONVERSACION_GENUINA
+"¿Qué vamos a almorzar hoy?",legitimo,CONVERSACION_GENUINA
+"Mamá, ¿hay algo de comer en la casa?",legitimo,CONVERSACION_GENUINA
+"Compré salteñas para todos, vengan a la casa",legitimo,CONVERSACION_GENUINA
+"¿Vamos por un api con pastel más tarde?",legitimo,CONVERSACION_GENUINA
+"Hoy hay sopa de maní, no llegues tarde",legitimo,CONVERSACION_GENUINA
+"Trae coca cola cuando vengas porfa",legitimo,CONVERSACION_GENUINA
+"¿Pedimos pizza o hamburguesas?",legitimo,CONVERSACION_GENUINA
+"Ya hice la reserva para el sábado a las ocho",legitimo,CONVERSACION_GENUINA
+"El examen de cálculo es el jueves, hay que estudiar",legitimo,CONVERSACION_GENUINA
+"¿Tienes los apuntes de la clase de ayer?",legitimo,CONVERSACION_GENUINA
+"El inge dijo que el proyecto se entrega el lunes",legitimo,CONVERSACION_GENUINA
+"¿A qué hora es la práctica de laboratorio?",legitimo,CONVERSACION_GENUINA
+"Hoy no hay clases, el docente está enfermo",legitimo,CONVERSACION_GENUINA
+"¿Hacemos el trabajo grupal en la biblioteca?",legitimo,CONVERSACION_GENUINA
+"Ya subí mi parte del informe, revísala cuando puedas",legitimo,CONVERSACION_GENUINA
+"Saqué 85 en el parcial, estoy feliz",legitimo,CONVERSACION_GENUINA
+"La defensa de grado es el viernes a las diez, ¿vienes?",legitimo,CONVERSACION_GENUINA
+"Mañana tengo turno temprano en el trabajo",legitimo,CONVERSACION_GENUINA
+"Mi jefe me pidió quedarme hasta tarde hoy",legitimo,CONVERSACION_GENUINA
+"La reunión de equipo se movió a las cuatro",legitimo,CONVERSACION_GENUINA
+"Ya mandé el reporte al correo del supervisor",legitimo,CONVERSACION_GENUINA
+"Hoy salgo a las seis, ¿me recoges?",legitimo,CONVERSACION_GENUINA
+"Feliz cumple hermano, que la pases bonito",legitimo,CONVERSACION_GENUINA
+"Felicidades por tu graduación, te lo mereces",legitimo,CONVERSACION_GENUINA
+"Que te mejores pronto, cualquier cosa me avisas",legitimo,CONVERSACION_GENUINA
+"Mi abuela está mejor, gracias por preguntar",legitimo,CONVERSACION_GENUINA
+"El domingo hay almuerzo familiar en la casa de la tía",legitimo,CONVERSACION_GENUINA
+"Mi hermano llega de viaje mañana en la mañana",legitimo,CONVERSACION_GENUINA
+"¿Puedes cuidar a los chicos un ratito esta tarde?",legitimo,CONVERSACION_GENUINA
+"Ya recogí a los niños del colegio",legitimo,CONVERSACION_GENUINA
+"No te olvides de sacar la basura",legitimo,CONVERSACION_GENUINA
+"Se acabó el gas, hay que comprar una garrafa",legitimo,CONVERSACION_GENUINA
+"Hay mucho tráfico en el segundo anillo, voy a llegar tarde",legitimo,CONVERSACION_GENUINA
+"Está bloqueado el puente, mejor da la vuelta por la avenida",legitimo,CONVERSACION_GENUINA
+"Hace mucho frío hoy, abrígate bien",legitimo,CONVERSACION_GENUINA
+"Está lloviendo fuerte, mejor no salgas",legitimo,CONVERSACION_GENUINA
+"¿Viste el clásico? Qué golazo el del final",legitimo,CONVERSACION_GENUINA
+"El sábado jugamos fulbito a las cinco, ¿te apuntas?",legitimo,CONVERSACION_GENUINA
+"¿Ya viste la nueva serie? Está buenísima",legitimo,CONVERSACION_GENUINA
+"Esa canción me encanta, la escuché todo el día",legitimo,CONVERSACION_GENUINA
+"Vamos al cine el viernes, hay estreno",legitimo,CONVERSACION_GENUINA
+"Te extraño mucho, ¿cuándo vuelves?",legitimo,CONVERSACION_GENUINA
+"Buenas noches amor, que sueñes bonito",legitimo,CONVERSACION_GENUINA
+"Gracias por el regalo, me encantó",legitimo,CONVERSACION_GENUINA
+"Mi perro se escapó pero ya lo encontramos",legitimo,CONVERSACION_GENUINA
+"Llevé el auto al mecánico, dice que es el embrague",legitimo,CONVERSACION_GENUINA
+"El doctor dijo que tome el remedio cada ocho horas",legitimo,CONVERSACION_GENUINA
+"Tengo cita en el dentista a las cuatro",legitimo,CONVERSACION_GENUINA
+"¿Me prestas tu cargador? El mío se rompió",legitimo,CONVERSACION_GENUINA
+"Urgente, tráeme el cargador que me olvidé en la casa",legitimo,CONVERSACION_GENUINA
+"Apúrate que ya sale el micro",legitimo,CONVERSACION_GENUINA
+"Es urgente que me llames cuando salgas de clases, es sobre la fiesta",legitimo,CONVERSACION_GENUINA
+"Mándame tu ubicación para ir a recogerte",legitimo,CONVERSACION_GENUINA
+"Pásame el número de la señora de las tortas",legitimo,CONVERSACION_GENUINA
+"Este es el número de mi primo para lo del flete: 71234567",legitimo,CONVERSACION_GENUINA
+"Te paso el contacto del electricista, es de confianza",legitimo,CONVERSACION_GENUINA
+"Ya te transferí los 50 Bs del almuerzo",legitimo,CONVERSACION_GENUINA
+"Pásame tu QR para pagarte lo de la entrada",legitimo,CONVERSACION_GENUINA
+"Te pago el viernes cuando cobre, no te preocupes",legitimo,CONVERSACION_GENUINA
+"¿Cuánto te debo de la cena?",legitimo,CONVERSACION_GENUINA
+"Son 35 Bs por persona para el regalo de la profe",legitimo,CONVERSACION_GENUINA
+"Ya pagué la luz y el agua de este mes",legitimo,CONVERSACION_GENUINA
+"Voy al banco a depositar el alquiler",legitimo,CONVERSACION_GENUINA
+"El cajero del BCP de la esquina no funciona",legitimo,CONVERSACION_GENUINA
+"Me llegó el sueldo, el sábado invito yo",legitimo,CONVERSACION_GENUINA
+"La cuota del curso de inglés es 200 Bs, se paga en secretaría",legitimo,CONVERSACION_GENUINA
+"Hice el depósito en tu cuenta del BNB, fíjate cuando puedas",legitimo,CONVERSACION_GENUINA
+"El banco cierra a las cuatro los sábados, anda temprano",legitimo,CONVERSACION_GENUINA
+"La clave del wifi es casa2024, está pegada en el router",legitimo,CONVERSACION_GENUINA
+"El banco nunca te va a pedir tu PIN por mensaje, no lo compartas",legitimo,CONVERSACION_GENUINA
+"Ojo que están mandando mensajes falsos de premios, no abran nada",legitimo,CONVERSACION_GENUINA
+"A mi tía le quisieron estafar con lo del hijo que cambió de número, tengan cuidado",legitimo,CONVERSACION_GENUINA
+"Gané el sorteo de la rifa del colegio, me tocó una licuadora",legitimo,CONVERSACION_GENUINA
+"Mi mamá ganó una canasta en el bingo de la parroquia",legitimo,CONVERSACION_GENUINA
+"Ganamos el partido 3 a 1, vamos a celebrar",legitimo,CONVERSACION_GENUINA
+"Compré la tele en cuotas en la tienda de la avenida",legitimo,CONVERSACION_GENUINA
+"El envío de mi pedido llega el martes según la tienda",legitimo,CONVERSACION_GENUINA
+"Ya llegó mi encomienda de Cochabamba, gracias",legitimo,CONVERSACION_GENUINA
+"Mira mi perfil de Instagram https://www.instagram.com/dario.montano/",legitimo,CONVERSACION_GENUINA
+"Sígueme en insta: https://instagram.com/lu.fotografia",legitimo,CONVERSACION_GENUINA
+"Mira esta foto que subí https://www.instagram.com/p/C8xYz12AbCd/",legitimo,CONVERSACION_GENUINA
+"Jajaja mira este reel https://www.instagram.com/reel/C9aBcDeFgHi/",legitimo,CONVERSACION_GENUINA
+"Este es el insta de la tienda de ropa que te dije instagram.com/modas.santacruz",legitimo,CONVERSACION_GENUINA
+"Te paso el perfil del fotógrafo de la boda https://www.instagram.com/estudio.luzbo/",legitimo,CONVERSACION_GENUINA
+"Mira este video jajaja https://www.tiktok.com/@chistesbolivia/video/7312345678901234567",legitimo,CONVERSACION_GENUINA
+"Esta receta de TikTok se ve fácil https://vm.tiktok.com/ZMabc123/",legitimo,CONVERSACION_GENUINA
+"Escucha esta canción https://www.youtube.com/watch?v=dQw4w9WgXcQ",legitimo,CONVERSACION_GENUINA
+"El tutorial que te dije https://youtu.be/abc123XYZ",legitimo,CONVERSACION_GENUINA
+"La clase grabada está aquí https://www.youtube.com/watch?v=Xy12AbCd34",legitimo,CONVERSACION_GENUINA
+"Te dejo la página del evento en Facebook https://www.facebook.com/events/123456789",legitimo,CONVERSACION_GENUINA
+"Mira la publicación de la fundación https://www.facebook.com/fundacionayuda/posts/987654",legitimo,CONVERSACION_GENUINA
+"Esta es la ubicación del restaurante https://maps.app.goo.gl/AbCdEf123",legitimo,CONVERSACION_GENUINA
+"Te mando la ubicación de mi casa https://maps.google.com/?q=-17.7833,-63.1821",legitimo,CONVERSACION_GENUINA
+"Ahí está la carpeta con las fotos de la promo https://drive.google.com/drive/folders/1AbCdEfGh",legitimo,CONVERSACION_GENUINA
+"Edita aquí el informe grupal https://docs.google.com/document/d/1XyZ123/edit",legitimo,CONVERSACION_GENUINA
+"Llenen la encuesta del curso por favor https://forms.gle/AbC123xyz",legitimo,CONVERSACION_GENUINA
+"El link de la clase virtual es https://meet.google.com/abc-defg-hij",legitimo,CONVERSACION_GENUINA
+"Reunión por Zoom a las siete https://zoom.us/j/1234567890",legitimo,CONVERSACION_GENUINA
+"Escucha esta playlist para el viaje https://open.spotify.com/playlist/37i9dQZF1DX",legitimo,CONVERSACION_GENUINA
+"Mi currículum actualizado está en https://www.linkedin.com/in/dario-montano",legitimo,CONVERSACION_GENUINA
+"El código del proyecto está en https://github.com/grupo5/detector",legitimo,CONVERSACION_GENUINA
+"Escríbele a mi tía para el pedido de tortas https://wa.me/59171234567",legitimo,CONVERSACION_GENUINA
+"Únete al grupo del curso https://chat.whatsapp.com/AbCdEfGhIjK",legitimo,CONVERSACION_GENUINA
+"Lee esta noticia https://eldeber.com.bo/santa-cruz/nuevo-horario-de-micros",legitimo,CONVERSACION_GENUINA
+"Salió en Los Tiempos https://www.lostiempos.com/actualidad/cochabamba/clima",legitimo,CONVERSACION_GENUINA
+"Mira esto que publicaron https://www.opinion.com.bo/articulo/deportes/123.html",legitimo,CONVERSACION_GENUINA
+"Para pagar impuestos entra a la página oficial https://www.impuestos.gob.bo",legitimo,CONVERSACION_GENUINA
+"Según la página del banco https://www.bnb.com.bo la app estará en mantenimiento el domingo",legitimo,CONVERSACION_GENUINA
+"Los horarios de atención del BCP están en https://www.bcp.com.bo",legitimo,CONVERSACION_GENUINA
+"Los requisitos de inscripción están en https://www.unifranz.edu.bo",legitimo,CONVERSACION_GENUINA
+"Busca en Wikipedia, ahí sale todo https://es.wikipedia.org/wiki/Bolivia",legitimo,CONVERSACION_GENUINA
+"Mira estas zapatillas en Mercado Libre https://www.mercadolibre.com/p/zapatillas",legitimo,CONVERSACION_GENUINA
+"Te pasé el diseño en Canva https://www.canva.com/design/DAF123/edit",legitimo,CONVERSACION_GENUINA
+"Esta es la serie que te conté https://www.netflix.com/title/80057281",legitimo,CONVERSACION_GENUINA
+"Mira mi perfil y dale like porfa https://www.instagram.com/sofi.dibujos/ jaja",legitimo,CONVERSACION_GENUINA
+"Ya subí las fotos del cumple a mi insta https://instagram.com/marce_vaca",legitimo,CONVERSACION_GENUINA
+"Mi primo abrió su emprendimiento, apóyenlo https://www.instagram.com/cafeteria.elpatio/",legitimo,CONVERSACION_GENUINA
+"La tienda tiene catálogo en su página https://www.tiendalinda.com/catalogo",legitimo,CONVERSACION_GENUINA
+"Mi blog de recetas https://recetasdelaabuela.com/sopa-de-mani",legitimo,CONVERSACION_GENUINA
+"El portafolio de mi hermana https://anarojasdiseno.com",legitimo,CONVERSACION_GENUINA
+"Ese meme es de este perfil https://x.com/memesbolivia/status/1789",legitimo,CONVERSACION_GENUINA
+"El canal del profe en Telegram https://t.me/matematicas_unifranz",legitimo,CONVERSACION_GENUINA
+"Hola, ¿cómo estás? Te mando el link del grupo de estudio https://chat.whatsapp.com/XyZ987",legitimo,CONVERSACION_GENUINA
+"Buen día, les recuerdo que mañana hay reunión de padres en el colegio",legitimo,CONVERSACION_GENUINA
+"Señores vecinos, el corte de agua es mañana de 8 a 12",legitimo,CONVERSACION_GENUINA
+"La farmacia de turno hoy es la de la calle Sucre",legitimo,CONVERSACION_GENUINA
+"Gracias por su compra, su pedido será entregado mañana por la tarde",legitimo,CONVERSACION_GENUINA
+"Le recordamos su cita médica para el día lunes a las 9:00",legitimo,CONVERSACION_GENUINA
+"Su vehículo está listo, puede pasar a recogerlo en horario de oficina",legitimo,CONVERSACION_GENUINA
+"El curso empieza el 5 de febrero, las inscripciones son en la oficina",legitimo,CONVERSACION_GENUINA
+"Hola profe, ¿podría revisar mi tarea? La envié al correo",legitimo,CONVERSACION_GENUINA
+"Licen, ¿hasta qué hora atienden hoy?",legitimo,CONVERSACION_GENUINA
+"Buenas, ¿todavía tiene disponible la bici que publicó? Puedo verla mañana",legitimo,CONVERSACION_GENUINA
+"Sí, la bici sigue disponible, puede venir a verla al taller sin compromiso",legitimo,CONVERSACION_GENUINA
+"Nos vemos en el mercado para que veas el celular antes de comprarlo",legitimo,CONVERSACION_GENUINA
+"Te devuelvo tu libro el lunes en clases",legitimo,CONVERSACION_GENUINA
+"Ya tengo las entradas para el concierto",legitimo,CONVERSACION_GENUINA
+"¿Me ayudas a mudarme el sábado? Te invito el almuerzo",legitimo,CONVERSACION_GENUINA
+"Llegué bien a La Paz, hace un frío terrible",legitimo,CONVERSACION_GENUINA
+"El vuelo se retrasó una hora, te aviso cuando aterrice",legitimo,CONVERSACION_GENUINA
+"Ya estoy en la terminal, el bus sale a las diez de la noche",legitimo,CONVERSACION_GENUINA
+"Que Dios te bendiga, hijo, cuídate mucho",legitimo,CONVERSACION_GENUINA
+"Te mando un beso grande, abuelita",legitimo,CONVERSACION_GENUINA
+"Perdón por no contestar, estaba manejando",legitimo,CONVERSACION_GENUINA
+"Se me descargó el celular, por eso no respondía",legitimo,CONVERSACION_GENUINA
+"Ahora te llamo, estoy terminando algo",legitimo,CONVERSACION_GENUINA
+"No te preocupes, todo salió bien",legitimo,CONVERSACION_GENUINA
+"Me encantó verte hoy, repitamos pronto",legitimo,CONVERSACION_GENUINA
+"Mañana es feriado, ¿hacemos algo?",legitimo,CONVERSACION_GENUINA
+"Qué lindo día para ir al parque",legitimo,CONVERSACION_GENUINA
+"Ya llegaron los resultados del laboratorio, todo normal",legitimo,CONVERSACION_GENUINA
+"Mi código de estudiante es el 2021345, por si te lo piden en la lista",legitimo,CONVERSACION_GENUINA
+"¿Cuál era el código de la materia para inscribirme?",legitimo,CONVERSACION_GENUINA
+"La contraseña de la cuenta de Netflix familiar la cambió papá, pregúntale",legitimo,CONVERSACION_GENUINA
+"Activé la verificación en dos pasos en mi WhatsApp, recomendado",legitimo,CONVERSACION_GENUINA
+"Mi nuevo número es este, guárdalo porfa. Soy Carla, la de la oficina, te llamo para confirmar",legitimo,CONVERSACION_GENUINA
+"Si quieres pagar con QR te mando el del negocio, o pagas en efectivo al recoger",legitimo,CONVERSACION_GENUINA
+"Ya cancelé la deuda de la tarjeta en ventanilla, todo en orden",legitimo,CONVERSACION_GENUINA
+"El préstamo del banco lo estoy pagando en cuotas, ya falta poco",legitimo,CONVERSACION_GENUINA
+"¿Viste que subió el precio del pasaje del micro?",legitimo,CONVERSACION_GENUINA
+"Hoy hay feria en la plaza principal, vamos",legitimo,CONVERSACION_GENUINA
+"Mira qué bonito salió el atardecer",legitimo,CONVERSACION_GENUINA
+"Jaja eso mismo pensé",legitimo,CONVERSACION_GENUINA
+"De nada, para eso estamos",legitimo,CONVERSACION_GENUINA
+"Buenas noches, hasta mañana",legitimo,CONVERSACION_GENUINA
+"Nos vemos el lunes en la U",legitimo,CONVERSACION_GENUINA
+"Chau, cuídate",legitimo,CONVERSACION_GENUINA
+"Gracias, igualmente",legitimo,CONVERSACION_GENUINA
+"Te quiero mucho mamá",legitimo,CONVERSACION_GENUINA
+"Ya estoy en casa, todo bien",legitimo,CONVERSACION_GENUINA
+"URGENTE: tu cuenta será bloqueada en una hora. Envía tu contraseña para evitarlo.",fraudulento,PHISHING_BANCARIO
+"Has ganado 5000 euros sin participar. Paga una tasa de 50 euros para recibir tu premio.",fraudulento,PREMIO_FALSO
+"Somos el banco. Confirma tu clave y el código SMS ahora mismo o perderás el acceso.",fraudulento,PHISHING_BANCARIO
+"Tu paquete está retenido. Paga inmediatamente en https://entrega-verificar.example.com/pago.",fraudulento,OTRO_FRAUDE
+"Hola mamá soy tu hijo, este es mi nuevo número. Haz una transferencia urgente de 900 euros.",fraudulento,SUPLANTACION_IDENTIDAD
+"Último aviso: multa pendiente. Abona hoy en http://multa-rapida.example.net o serás detenido.",fraudulento,OTRO_FRAUDE
+"Tu tarjeta ha sido suspendida. Introduce el PIN en www.validar-tarjeta.example.com.",fraudulento,PHISHING_BANCARIO
+"Inversión garantizada: duplica tu dinero en 24 horas. Transfiere tus ahorros ahora.",fraudulento,OTRO_FRAUDE
+"Felicidades, eres el ganador de un teléfono gratis. Envía tus datos bancarios y paga el envío.",fraudulento,PREMIO_FALSO
+"Departamento de seguridad: responde con el código de verificación que acabas de recibir.",fraudulento,PHISHING_BANCARIO
+"Solo tienes diez minutos para reclamar tu herencia. Ingresa 200 euros para desbloquearla.",fraudulento,PREMIO_FALSO
+"Detectamos un cargo. Para anularlo comparte tu contraseña de banca y tu código SMS.",fraudulento,PHISHING_BANCARIO
+"Oferta exclusiva de empleo: gana 300 euros al día. Primero debes pagar la matrícula por transferencia.",fraudulento,OTRO_FRAUDE
+"Tu devolución de impuestos caduca hoy. Escribe tu tarjeta completa en https://reembolso.example.net.",fraudulento,PHISHING_BANCARIO
+"¡PREMIO ASEGURADO! Has sido seleccionado. Compra tarjetas regalo y envíanos sus códigos.",fraudulento,PREMIO_FALSO
+"Soy el director, no puedo hablar. Necesito que transfieras dinero a esta cuenta ahora mismo.",fraudulento,SUPLANTACION_IDENTIDAD
+"Actualiza tu correo o borraremos todos tus archivos. Responde con usuario y contraseña.",fraudulento,PHISHING_BANCARIO
+"Tenemos un vídeo tuyo. Paga en criptomonedas hoy o lo enviaremos a todos tus contactos.",fraudulento,OTRO_FRAUDE
+"Tu pensión será cancelada. Verifica tus claves urgentemente en https://pension-segura.example.com.",fraudulento,PHISHING_BANCARIO
+"Recibe un bono de supermercado de 1000 euros. Paga 3 euros para activar el regalo.",fraudulento,PREMIO_FALSO
+"El banco necesita tu PIN y contraseña para una revisión inmediata. No llames a tu oficina.",fraudulento,PHISHING_BANCARIO
+"Te han concedido un préstamo sin requisitos. Deposita una comisión antes de recibirlo.",fraudulento,OTRO_FRAUDE
+"Tu familiar está detenido. Envía dinero inmediatamente y no lo consultes con nadie.",fraudulento,SUPLANTACION_IDENTIDAD
+"Ganaste la lotería internacional. Para cobrar debes transferir primero los impuestos a nuestra cuenta.",fraudulento,PREMIO_FALSO
+"Alerta de acceso ilegal. Instala el archivo adjunto y facilita tus claves al técnico.",fraudulento,PHISHING_BANCARIO
+"Necesitamos el número de tu tarjeta y el código de seguridad para liberar tu paquete.",fraudulento,OTRO_FRAUDE
+"Aprovecha esta inversión sin riesgo. Beneficio del 40 por ciento semanal si pagas hoy.",fraudulento,OTRO_FRAUDE
+"Tu servicio eléctrico se cortará en treinta minutos. Paga por este enlace https://cobro.example.org.",fraudulento,OTRO_FRAUDE
+"Has recibido una donación millonaria. Envía una comisión de gestión para desbloquear el dinero.",fraudulento,PREMIO_FALSO
+"Soy tu nieta, perdí el móvil. No llames y hazme un Bizum urgente a este nuevo número.",fraudulento,SUPLANTACION_IDENTIDAD
+"Valida tu identidad enviando una foto de tu tarjeta por ambos lados y tu contraseña.",fraudulento,PHISHING_BANCARIO
+"Última oportunidad para recuperar tu cuenta. Comparte el código de acceso en este chat.",fraudulento,PHISHING_BANCARIO
+"Reembolso aprobado: paga una tarifa de activación mediante transferencia para cobrarlo.",fraudulento,OTRO_FRAUDE
+"Un comprador ya pagó tu producto. Abre https://cobrar-venta.example.net e introduce tu clave bancaria.",fraudulento,PHISHING_BANCARIO
+"Tu antivirus ha caducado. Llama ahora y permite el acceso remoto para evitar perder tus fotos.",fraudulento,OTRO_FRAUDE
+"Hemos cambiado la cuenta del proveedor. Paga la factura hoy sin comprobarlo por teléfono.",fraudulento,SUPLANTACION_IDENTIDAD
+"Tu cuenta está en peligro. Retira tus ahorros y transfiérelos a nuestra cuenta de seguridad.",fraudulento,PHISHING_BANCARIO
+"Regalo exclusivo para jubilados. Para reservarlo necesitamos tu tarjeta y un pago inmediato.",fraudulento,PREMIO_FALSO
+"No le digas a nadie: necesito dinero para salir del hospital. Envíalo ahora a este número.",fraudulento,SUPLANTACION_IDENTIDAD
+"Tu premio está esperando. Entra en www.premio-inmediato.example.com y paga antes de medianoche.",fraudulento,PREMIO_FALSO
+"Te ganaste 5000 BS! entra a este enlace para reclamar el premio https://cobrartupremio.com",fraudulento,PREMIO_FALSO
+"HOLA MAMI SOY TU HIJO, ROBARON MI CELULAR, MANDAME PLATA A ESTE NUEVO NUMERO PARA PODER COMUNICARME CON VOS.",fraudulento,SUPLANTACION_IDENTIDAD
+"Aviso urgente Banco: Tu cuenta ha sido bloqueada preventivamente. Desbloquea en https://banco-desbloqueo.net",fraudulento,PHISHING_BANCARIO
+"Felicidades, tu número ha sido seleccionado para ganar 10.000 Bs. Reclama tu premio aquí: https://premio-sorteo.com",fraudulento,PREMIO_FALSO
+"Tía se me arruinó el celular, estoy varado en la terminal, ¿puedes prestarme dinero por QR urgente?",fraudulento,SUPLANTACION_IDENTIDAD
+"Servicio de Impuestos: Tienes una deuda pendiente con orden de embargo. Paga de inmediato en https://pago-multas.online",fraudulento,OTRO_FRAUDE
+"Tu paquete no pudo ser entregado por falta de dirección. Paga los costos de reenvío en https://rastreo-paqueteria.com",fraudulento,OTRO_FRAUDE
+"BNB informa: su cuenta fue suspendida por seguridad. Reactívela en http://bnb-seguro.info/login",fraudulento,PHISHING_BANCARIO
+"Estimado cliente BCP, detectamos un acceso inusual. Verifique sus datos en http://bcp-verificacion.com",fraudulento,PHISHING_BANCARIO
+"Banco Unión: su tarjeta de débito será bloqueada hoy. Actualice sus datos en https://bancounion-seguro.online",fraudulento,PHISHING_BANCARIO
+"Mercantil Santa Cruz le informa que su banca móvil caducó. Ingrese aquí http://mercantil-bo.xyz/acceso",fraudulento,PHISHING_BANCARIO
+"BancoSol: confirme su identidad para evitar el cierre de su cuenta https://bancosol-clientes.site",fraudulento,PHISHING_BANCARIO
+"Su Tigo Money tiene un saldo retenido de 850 Bs. Libérelo ingresando su PIN en http://tigomoney-bo.top",fraudulento,PHISHING_BANCARIO
+"ALERTA: se realizó un débito de 1500 Bs de su cuenta. Si no lo reconoce ingrese a https://bit.ly/anular-debito",fraudulento,PHISHING_BANCARIO
+"Su cuenta bancaria será inhabilitada por falta de actualización. Complete el formulario https://tinyurl.com/actualiza-banco",fraudulento,PHISHING_BANCARIO
+"Le escribimos del área de seguridad del banco. Para cancelar la compra sospechosa díganos el código que le llegó por SMS",fraudulento,PHISHING_BANCARIO
+"Hola, soy ejecutivo del BNB. Su clave venció, por favor dícteme su clave actual para renovarla",fraudulento,PHISHING_BANCARIO
+"ASFI le informa que su cuenta tiene una observación. Regularice en http://asfi-regularizacion.com",fraudulento,PHISHING_BANCARIO
+"Banco Ganadero: ganaste puntos que vencen hoy. Canjéalos en https://ganadero-puntos.click con tu usuario y clave",fraudulento,PHISHING_BANCARIO
+"Su tarjeta de crédito fue clonada. Llame urgente a este número y tenga a mano su CVV",fraudulento,PHISHING_BANCARIO
+"Detectamos movimientos sospechosos en tu cuenta. Responde este mensaje con tu número de tarjeta y fecha de vencimiento",fraudulento,PHISHING_BANCARIO
+"Banca móvil desactivada. Para reactivar descargue la nueva app desde http://bnb-app-descarga.com/apk",fraudulento,PHISHING_BANCARIO
+"Su cuenta presenta un bloqueo preventivo. Ingrese a http://192.168.10.5/banco para desbloquear",fraudulento,PHISHING_BANCARIO
+"Estimado usuario, su token digital expiró. Actualice en https://xn--bnb-ssa.com/token",fraudulento,PHISHING_BANCARIO
+"Hola, te envié un código de 6 dígitos por error a tu celular, ¿me lo pasas porfa? Es urgente",fraudulento,PHISHING_BANCARIO
+"Amiga, me llegó un mensaje a tu número sin querer, pásame el código que te llegó por SMS",fraudulento,PHISHING_BANCARIO
+"Soporte de WhatsApp: tu cuenta será eliminada en 24 horas. Envía el código de verificación para mantenerla",fraudulento,PHISHING_BANCARIO
+"Instagram: tu cuenta infringe derechos de autor y será eliminada. Apela aquí https://instagram-verificar-cuenta.com",fraudulento,PHISHING_BANCARIO
+"Meta Support: tu página de Facebook será desactivada. Verifica tu identidad en http://facebook-soporte.help-center.xyz",fraudulento,PHISHING_BANCARIO
+"Tu cuenta de Netflix está suspendida por un problema de pago. Actualiza tu tarjeta en http://netflix-pagos.com",fraudulento,PHISHING_BANCARIO
+"Apple ID bloqueado. Desbloquea con tus datos en https://apple-id-desbloqueo.online",fraudulento,PHISHING_BANCARIO
+"Hola, soy del soporte técnico de Instagram, para darte la insignia de verificado necesito tu contraseña",fraudulento,PHISHING_BANCARIO
+"Tu correo alcanzó el límite de almacenamiento. Inicia sesión aquí para no perder tus archivos http://correo-actualizar.site",fraudulento,PHISHING_BANCARIO
+"Mamá, cambié de número, el otro se me cayó al agua. Guarda este. ¿Me puedes hacer un depósito? Te explico luego",fraudulento,SUPLANTACION_IDENTIDAD
+"Hola tío, soy tu sobrino, este es mi nuevo número. Estoy en problemas, necesito 700 Bs urgente, no le digas a mi mamá",fraudulento,SUPLANTACION_IDENTIDAD
+"Papá se me perdió el celular, te escribo de este número. Préstame 500 Bs por QR, mañana te devuelvo",fraudulento,SUPLANTACION_IDENTIDAD
+"Adivina quién soy jaja, cambié de chip. Oye, necesito un favor, ¿me prestas plata hasta el lunes?",fraudulento,SUPLANTACION_IDENTIDAD
+"Hola, soy tu prima, ¿no me reconoces? Estoy varada, mándame plata para el pasaje urgente",fraudulento,SUPLANTACION_IDENTIDAD
+"Soy tu jefe, estoy en una reunión y no puedo llamar. Compra tarjetas de regalo y mándame los códigos",fraudulento,SUPLANTACION_IDENTIDAD
+"Abuelita soy yo, tuve un accidente con el auto y necesito pagar al policía ahora mismo, no llames a nadie",fraudulento,SUPLANTACION_IDENTIDAD
+"Le llamamos de la policía, su hijo está detenido. Para liberarlo deposite 2000 Bs en esta cuenta inmediatamente",fraudulento,SUPLANTACION_IDENTIDAD
+"Hola amor, perdí mi tarjeta y estoy en el super, ¿me transfieres 300 Bs a esta cuenta que es de mi amiga?",fraudulento,SUPLANTACION_IDENTIDAD
+"Soy el doctor del hospital, su familiar ingresó grave. Deposite para la operación urgente a esta cuenta",fraudulento,SUPLANTACION_IDENTIDAD
+"Hola, soy Juan de la oficina, cambié de número. ¿Puedes hacerme una transferencia? Te la devuelvo hoy",fraudulento,SUPLANTACION_IDENTIDAD
+"Hijo, soy tu mamá, estoy usando el celular de una señora. Mándame el código que te llegó para recuperar mi WhatsApp",fraudulento,SUPLANTACION_IDENTIDAD
+"Te habla el proveedor, cambiamos de número de cuenta. Deposite el pago pendiente en esta nueva cuenta hoy",fraudulento,SUPLANTACION_IDENTIDAD
+"Felicidades! Tu número fue seleccionado en el sorteo aniversario de Tigo. Ganaste una moto. Paga el trámite en http://tigo-sorteo.xyz",fraudulento,PREMIO_FALSO
+"Entel te premia con 5000 Bs en saldo. Para activarlo envía una recarga de 50 Bs a este número",fraudulento,PREMIO_FALSO
+"Ganaste el sorteo de nuestra página de Instagram! Para enviarte el iPhone paga solo el envío de 120 Bs",fraudulento,PREMIO_FALSO
+"Fuiste seleccionado como ganador de una canasta familiar. Reclama aquí https://canasta-familiar-bolivia.online",fraudulento,PREMIO_FALSO
+"Felicidades, ganaste un bono del gobierno de 2000 Bs. Regístrate con tu CI y datos bancarios en http://bono-bolivia.site",fraudulento,PREMIO_FALSO
+"Ganaste un viaje a Cancún para dos personas. Solo debes depositar la garantía de 300 dólares",fraudulento,PREMIO_FALSO
+"Tu número ganó en la lotería nacional. Para cobrar el premio deposita los impuestos por adelantado",fraudulento,PREMIO_FALSO
+"Has sido seleccionado para recibir un televisor gratis. Haz clic en https://bit.ly/tele-gratis y completa tus datos",fraudulento,PREMIO_FALSO
+"Promo aniversario: los primeros 100 en registrarse ganan 1000 Bs. Ingresa tu tarjeta en http://promo-regalo.click",fraudulento,PREMIO_FALSO
+"Te ganaste un celular nuevo! Envíanos tu nombre, CI y una foto de tu tarjeta para el envío",fraudulento,PREMIO_FALSO
+"PREMIO: fuiste elegido en el sorteo del supermercado. Paga 80 Bs de comisión por QR para retirar tu premio",fraudulento,PREMIO_FALSO
+"Felicitaciones, ganaste una beca completa. Para reservarla deposita la matrícula hoy en esta cuenta",fraudulento,PREMIO_FALSO
+"Trabajo desde casa: gana 500 Bs diarios dando likes. Escríbele a mi asesora https://wa.me/447700900123",fraudulento,OTRO_FRAUDE
+"Buscamos personal para trabajo online, sueldo de 4000 Bs sin experiencia. Paga 150 Bs de inscripción",fraudulento,OTRO_FRAUDE
+"Invierte 500 Bs y recibe 2500 Bs en una semana. Ganancias garantizadas con criptomonedas",fraudulento,OTRO_FRAUDE
+"Únete a nuestro grupo de inversión en USDT, duplicamos tu dinero cada 48 horas https://t.me/inversiones_seguras_vip",fraudulento,OTRO_FRAUDE
+"Gana dinero desde tu celular con tareas pagadas. Primero deposita 100 Bs para activar tu cuenta",fraudulento,OTRO_FRAUDE
+"Oportunidad única de trading: rentabilidad del 30 por ciento mensual sin riesgo. Transfiere hoy y empieza a ganar",fraudulento,OTRO_FRAUDE
+"Préstamo inmediato sin garantes ni papeles. Solo deposita 200 Bs de seguro y te desembolsamos hoy",fraudulento,OTRO_FRAUDE
+"Te aprobamos un crédito de 20000 Bs. Para el desembolso paga la comisión de apertura por QR",fraudulento,OTRO_FRAUDE
+"Su encomienda está retenida en aduana. Pague 95 Bs de impuestos en http://aduana-paquetes.top para liberarla",fraudulento,OTRO_FRAUDE
+"DHL: su paquete no pudo entregarse. Reprograme pagando 15 Bs en https://dhl-reenvio.online",fraudulento,OTRO_FRAUDE
+"Correos de Bolivia: tiene un paquete pendiente. Confirme su dirección y pague el envío en http://correos-bo.xyz",fraudulento,OTRO_FRAUDE
+"Impuestos Nacionales: tiene una deuda tributaria con orden de embargo. Pague hoy en https://impuestos-pago.online",fraudulento,OTRO_FRAUDE
+"Tiene una multa de tránsito impaga. Evite la retención de su vehículo pagando en http://multas-transito.site",fraudulento,OTRO_FRAUDE
+"Su servicio de luz será cortado en 2 horas por falta de pago. Pague ahora por QR a este número",fraudulento,OTRO_FRAUDE
+"Tengo fotos tuyas íntimas. Si no depositas 1000 Bs hoy las publico en todas tus redes",fraudulento,OTRO_FRAUDE
+"Tenemos información de que tienes una denuncia. Para archivarla paga 800 Bs al abogado hoy mismo",fraudulento,OTRO_FRAUDE
+"Hola, vi tu publicación en Marketplace. Te deposito ahora, solo necesito que me pases el código que te va a llegar",fraudulento,OTRO_FRAUDE
+"Te compro el producto, ya te transferí, mira el comprobante en http://comprobante-pago.site e ingresa tu clave para recibirlo",fraudulento,PHISHING_BANCARIO
+"Alquilo departamento amoblado barato en Equipetrol. Para reservar deposita el adelanto hoy, no se puede visitar",fraudulento,OTRO_FRAUDE
+"Vendo iPhone 15 nuevo a 1500 Bs, solo con depósito previo, no hago entregas en persona",fraudulento,OTRO_FRAUDE
+"Te deposité por error 500 Bs a tu cuenta, devuélvemelos por favor a este otro número de cuenta urgente",fraudulento,OTRO_FRAUDE
+"Su línea será suspendida por actualización del sistema. Envíe su número de CI y el PIN de su chip",fraudulento,PHISHING_BANCARIO
+"Tu antivirus detectó un virus. Descarga la limpieza aquí http://limpiar-celular.xyz o perderás tus fotos",fraudulento,OTRO_FRAUDE
+"Mira estas fotos tuyas que encontré jaja http://fotos-privadas.top/ver",fraudulento,OTRO_FRAUDE
+"¿Eres tú en este video? http://bit.ly/video-tuyo-xx",fraudulento,OTRO_FRAUDE
+"Hola guapo, soy Valeria. Me gustaste, entra a mi página privada http://valeria-chat.online y regístrate con tu tarjeta",fraudulento,OTRO_FRAUDE
+"Solo por hoy: recarga 100 Bs y recibe 500 Bs de saldo. Envía tu recarga a este número",fraudulento,PREMIO_FALSO
+"Necesitamos verificar tu cuenta de Tigo Money. Envía tu PIN para evitar el bloqueo",fraudulento,PHISHING_BANCARIO
+"Último aviso: tu cuenta de banca por internet será cerrada hoy. Ingresa tu usuario y clave en https://banca-online-bo.site",fraudulento,PHISHING_BANCARIO
+"Le informamos que ganó un reembolso de 350 Bs. Para recibirlo ingrese los datos de su tarjeta en http://reembolso-bo.info",fraudulento,PHISHING_BANCARIO
+"Estimado cliente, hemos bloqueado su tarjeta por seguridad. Llame al 800 falso y diga su PIN para desbloquearla",fraudulento,PHISHING_BANCARIO
+"Mami, mi celular se mojó, este es mi nuevo número. Necesito que me pagues el técnico por QR, porfa urgente",fraudulento,SUPLANTACION_IDENTIDAD
+"Hola, ¿cómo estás? Te escribo de otro número, el mío se dañó. ¿Me harías un favor con 400 Bs? Te devuelvo mañana",fraudulento,SUPLANTACION_IDENTIDAD
+"Felicidades, tu CI salió sorteado para un bono de 3000 Bs. Cobra aquí http://cobro-bono.top antes de medianoche",fraudulento,PREMIO_FALSO
+"Hola! Mira mi perfil y gana dinero conmigo invirtiendo, te enseño a duplicar tus ahorros https://www.instagram.com/trader.millonario.vip",fraudulento,OTRO_FRAUDE
+"Gana 300 Bs por día solo dando me gusta a videos de TikTok. Paga la membresía de 100 Bs para empezar",fraudulento,OTRO_FRAUDE
+"Disculpa, te llegó un código de WhatsApp por equivocación, ¿me lo reenvías? Es mío",fraudulento,PHISHING_BANCARIO
+"Hola! Puse tu número sin querer al registrarme, mándame el código que te llegó porfa",fraudulento,PHISHING_BANCARIO
+"Te va a llegar un código de 6 dígitos, dímelo rápido que es para votar por mi sobrina en un concurso",fraudulento,PHISHING_BANCARIO
+"Soy del soporte de Telegram, confirma tu cuenta enviándonos el código que acabas de recibir",fraudulento,PHISHING_BANCARIO
+"Amigo, me equivoqué de número al poner el código, ¿me lo pasas? Te llegó por SMS",fraudulento,PHISHING_BANCARIO
+"El código del aula para la clase de mañana es 304",legitimo,CONVERSACION_GENUINA
+"El código postal de mi casa es el mismo de siempre",legitimo,CONVERSACION_GENUINA
+"Nunca le pases a nadie el código que te llega por SMS, así roban cuentas de WhatsApp",legitimo,CONVERSACION_GENUINA
+"Te mandé el archivo por correo, revisa si te llegó",legitimo,CONVERSACION_GENUINA
+"Ya llegó tu pedido de la farmacia, lo dejé en portería",legitimo,CONVERSACION_GENUINA
+"Mira mi página de emprendimiento https://www.facebook.com/tortasdelaabuela.scz",legitimo,CONVERSACION_GENUINA
+"Ahí te dejo mi Instagram de fotografía https://www.instagram.com/lentes.andinos/",legitimo,CONVERSACION_GENUINA
+"Mi hija subió su primer video a YouTube, apóyenla https://www.youtube.com/@cocinaconvale",legitimo,CONVERSACION_GENUINA
+"Hola, soy la vecina del 4B, ¿me prestas tu escalera un rato?",legitimo,CONVERSACION_GENUINA
+"¿Me puedes prestar 20 Bs hasta mañana? Te los devuelvo en la U",legitimo,CONVERSACION_GENUINA

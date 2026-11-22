@@ -37,7 +37,7 @@ class AnalyzeResponse(BaseModel):
     # Decisión táctica de Nivel 2 (campos añadidos; no alteran los anteriores)
     accion_tactica: Literal["PERMITIR", "ADVERTIR", "BLOQUEAR_ENLACES"] = "PERMITIR"
     categoria_fraude: Literal["CONVERSACION_GENUINA", "PHISHING_BANCARIO",
-                              "SUPLANTACION_IDENTIDAD", "PREMIO_FALSO"] = "CONVERSACION_GENUINA"
+                              "SUPLANTACION_IDENTIDAD", "PREMIO_FALSO", "OTRO_FRAUDE"] = "CONVERSACION_GENUINA"
     confianza_calibrada: float | None = None
     motor_decision: str = "fast_path"
     aviso: str = DISCLAIMER
