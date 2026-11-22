@@ -6,3 +6,5 @@ artifacts/*.joblib
 artifacts/*.json
 .env
 data/dispositivos_chat.json
+*.apk
+mobile_app/build/
